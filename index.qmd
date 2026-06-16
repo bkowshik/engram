@@ -1,41 +1,20 @@
 ---
-title: "engram"
-subtitle: "NeuroAI → Brain–Computer Interfaces 🧠"
-title-block-banner: true
 page-layout: full
+toc: false
+code-tools: false
 listing:
-  - id: featured
-    contents:
-      - "braindecode/shallow-convnet.ipynb"
-    type: grid
-    image-placeholder: assets/engram-card.svg
-    fields: [image, title, description, date, categories, reading-time]
-  - id: notebooks
-    contents:
-      - "**/*.ipynb"
-      - "!cookbook.ipynb"
-      - "!braindecode/shallow-convnet.ipynb"
-    type: grid
-    sort: "date desc"
-    categories: cloud
-    feed: true
-    image-placeholder: assets/engram-card.svg
-    fields: [image, title, description, date, categories, reading-time]
+  id: notebooks
+  contents: "**/*.ipynb"
+  type: grid
+  sort: "date desc"
+  categories: true
+  feed: true
+  fields: [title, description, date, categories, reading-time]
 ---
 
-An **engram** is the physical trace a memory leaves in the brain 🧠 — so this is
-where I store what I learn. I work in NeuroAI: I take raw neural signal and build
-the models that turn it into insight 💡. Each entry here is a runnable notebook —
-a paper reimplemented, a model dissected, an idea I was curious enough to chase
-down. I'm building toward brain–computer interfaces 🤖, and this is the
-groundwork, done in the open. 🚀
+> An **engram** is the physical trace a memory leaves in the brain — so this is where I store what I learn.
 
-## ⭐ Featured
-
-::: {#featured}
-:::
-
-## 📓 Notebooks
+---
 
 ::: {#notebooks}
 :::

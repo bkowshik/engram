@@ -26,13 +26,14 @@ Runnable notebooks and experiments from my work in **NeuroAI** and **brain–com
    [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bkowshik/engram/blob/main/<folder>/<notebook>.ipynb)
    ```
 
-## Local workflow (important)
+## Workflow (important)
 
-Builds are **frozen**: GitHub Actions never executes notebooks, it only assembles the site from the committed `_freeze/` cache. So you must render locally before pushing:
+The build **never executes notebooks** — it renders the outputs already saved inside each `.ipynb` (`execute: enabled: false`). So the runner needs no Python, no dependencies, and never downloads datasets.
+
+That means: **run a notebook (locally or in Colab), save it with its outputs, then commit.** A notebook committed without outputs will render with no figures.
 
 ```bash
-quarto preview        # live preview while editing
-quarto render         # updates _freeze/ with fresh outputs
+quarto preview        # live preview while editing (renders saved outputs)
 git add . && git commit -m "Add notebook" && git push
 ```
 
