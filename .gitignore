@@ -1,0 +1,20 @@
+# Quarto build output (the published site is built in CI)
+/_site/
+/.quarto/
+
+# Python environments
+.venv/
+venv/
+env/
+
+# Notebook / Python cruft
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+
+.DS_Store
+
+# NOTE: _freeze/ is intentionally NOT ignored — commit it so the CI build
+# can assemble the site from precomputed outputs without re-executing.
+
+**/*.quarto_ipynb

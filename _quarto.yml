@@ -1,0 +1,32 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - "*.qmd"
+    - "**/*.ipynb"
+
+website:
+  title: "engram"
+  description: "Notebooks and experiments from my work in NeuroAI and brain-computer interfaces."
+  site-url: "https://bkowshik.github.io/engram"
+  repo-url: "https://github.com/bkowshik/engram"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+    right:
+      - icon: github
+        href: https://github.com/bkowshik/engram
+
+# Frozen, precomputed outputs: the site is assembled from the committed
+# _freeze/ cache and is NEVER re-executed during a build. Render locally
+# (`quarto preview` or `quarto render`) before pushing so _freeze stays current.
+execute:
+  freeze: auto
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-tools: true
+    code-copy: true

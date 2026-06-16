@@ -1,0 +1,16 @@
+---
+title: "engram"
+subtitle: "Notebooks and experiments from my work in NeuroAI and brain-computer interfaces."
+listing:
+  contents:
+    - "**/*.ipynb"
+  type: default
+  sort: "date desc"
+  categories: true
+  fields: [title, description, date, categories, reading-time]
+page-layout: full
+---
+
+An **engram** is the physical trace a memory leaves in the brain - so this is
+where I store what I learn. Each entry is a runnable notebook: a paper
+reimplemented, a model dissected, or an idea I was curious enough to chase down.
