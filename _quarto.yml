@@ -40,3 +40,4 @@ format:
     toc: true
     code-tools: true
     code-copy: true
+    fig-format: retina
