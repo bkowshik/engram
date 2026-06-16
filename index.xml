@@ -103,7 +103,7 @@ font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> </span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"Short, specific title"</span></span>
+font-style: inherit;">'Short, specific title'</span></span>
 <span id="cb2-3"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">description</span><span class="kw" style="color: #003B4F;
@@ -113,7 +113,7 @@ font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> </span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"One line - shown in the listing and the social card."</span></span>
+font-style: inherit;">'One line - shown in the listing and the social card.'</span></span>
 <span id="cb2-4"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">date</span><span class="kw" style="color: #003B4F;
@@ -123,7 +123,7 @@ font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> </span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"2026-06-16"</span></span>
+font-style: inherit;">'2026-06-16'</span></span>
 <span id="cb2-5"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">date-modified</span><span class="kw" style="color: #003B4F;
@@ -133,7 +133,7 @@ font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> last-modified</span><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">   # auto-updates from file mtime - good for living docs</span></span>
+font-style: inherit;"> # auto-updates from file mtime - good for living docs</span></span>
 <span id="cb2-6"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">categories</span><span class="kw" style="color: #003B4F;
@@ -171,7 +171,7 @@ font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> references.bib</span><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">     # enables @citations</span></span>
+font-style: inherit;"> # enables @citations</span></span>
 <span id="cb2-8"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">toc</span><span class="kw" style="color: #003B4F;
@@ -193,7 +193,7 @@ font-style: inherit;"> </span><span class="ch" style="color: #20794D;
 background-color: null;
 font-style: inherit;">true</span><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">                # adds the "view source / copy" menu</span></span>
+font-style: inherit;"> # adds the "view source / copy" menu</span></span>
 <span id="cb2-10"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">image</span><span class="kw" style="color: #003B4F;
@@ -203,7 +203,7 @@ font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> thumbnail.png</span><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">            # optional - used in the social preview card</span></span>
+font-style: inherit;"> # optional - used in the social preview card</span></span>
 <span id="cb2-11"><span class="pp" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">---</span></span></code></pre></div></div>
@@ -213,20 +213,24 @@ font-style: inherit;">---</span></span></code></pre></div></div>
 <p>Coloured boxes for asides, insights, and gotchas. Flavours: <code>note</code>, <code>tip</code>, <code>warning</code>, <code>important</code>, <code>caution</code>.</p>
 <p><strong>Source</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode md code-with-copy"><code class="sourceCode markdown"><span id="cb3-1">::: {.callout-tip}</span>
-<span id="cb3-2"><span class="fu" style="color: #4758AB;
+<span id="cb3-2"></span>
+<span id="cb3-3"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">## Key insight</span></span>
-<span id="cb3-3">The takeaway in one or two sentences.</span>
-<span id="cb3-4">:::</span>
-<span id="cb3-5"></span>
-<span id="cb3-6">::: {.callout-warning collapse="true"}</span>
-<span id="cb3-7"><span class="fu" style="color: #4758AB;
+<span id="cb3-4"></span>
+<span id="cb3-5">The takeaway in one or two sentences.</span>
+<span id="cb3-6">:::</span>
+<span id="cb3-7"></span>
+<span id="cb3-8">::: {.callout-warning collapse="true"}</span>
+<span id="cb3-9"></span>
+<span id="cb3-10"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">## Gotcha (collapsed by default)</span></span>
-<span id="cb3-8">Add <span class="in" style="color: #5E5E5E;
+<span id="cb3-11"></span>
+<span id="cb3-12">Add <span class="in" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">`collapse="true"`</span> to fold long asides.</span>
-<span id="cb3-9">:::</span></code></pre></div></div>
+<span id="cb3-13">:::</span></code></pre></div></div>
 <p><strong>Renders as</strong></p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -273,11 +277,12 @@ font-style: inherit;"> $h_t = \sigma(W x_t + b)$</span></span>
 <span id="cb4-6"></span>
 <span id="cb4-7">Reference it with <span class="in" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">`@eq-nll`</span>.</span></code></pre></div></div>
+font-style: inherit;">`@eq-nll`</span>.</span>
+<span id="cb4-8">$$</span></code></pre></div></div>
 <p><strong>Renders as</strong></p>
 <p>Inline: <img src="https://latex.codecogs.com/png.latex?h_t%20=%20%5Csigma(W%20x_t%20+%20b)"></p>
 <p><span id="eq-nll"><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathcal%7BL%7D%20=%20%5Cfrac%7B1%7D%7BN%7D%5Csum_%7Bi=1%7D%5E%7BN%7D%20-%5C,y_i%20%5Clog%20%5Chat%7By%7D_i%0A%5Ctag%7B1%7D"></span></p>
-<p>The negative log-likelihood in Equation&nbsp;1 is the loss the Shallow ConvNet trains with.</p>
+<p>The negative log-likelihood in Equation&nbsp;1 is the loss the Shallow ConvNet trains with. $$</p>
 </section>
 <section id="citations-bibliography" class="level2">
 <h2 class="anchored" data-anchor-id="citations-bibliography">Citations &amp; bibliography</h2>
@@ -378,6 +383,7 @@ font-style: inherit;">```</span></span></code></pre></div></div>
 <section id="code-cells-source-output-together" class="level2">
 <h2 class="anchored" data-anchor-id="code-cells-source-output-together">Code cells: source + output together</h2>
 <p>A code cell is the clearest case: by default Quarto shows <strong>both</strong> the source and the output it produces. The cell below is labelled and captioned so the figure can be cross-referenced - and its code stays visible above the plot.</p>
+<p>Set <code>%config InlineBackend.figure_format = "retina"</code> once near the top so the saved plots are crisp on hi-DPI screens.</p>
 <div id="cell-fig-signal" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="im" style="color: #00769E;
 background-color: null;
@@ -389,8 +395,17 @@ background-color: null;
 font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">as</span> plt</span>
-<span id="cb8-3"></span>
-<span id="cb8-4">t <span class="op" style="color: #5E5E5E;
+<span id="cb8-3"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>config InlineBackend.figure_format <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"retina"</span>   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># crisp hi-DPI plots</span></span>
+<span id="cb8-4"></span>
+<span id="cb8-5">t <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> np.linspace(<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -399,7 +414,7 @@ background-color: null;
 font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">500</span>)</span>
-<span id="cb8-5">x <span class="op" style="color: #5E5E5E;
+<span id="cb8-6">x <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> np.sin(<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -412,29 +427,29 @@ background-color: null;
 font-style: inherit;">10</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span> t)</span>
-<span id="cb8-6"></span>
-<span id="cb8-7">plt.figure(figsize<span class="op" style="color: #5E5E5E;
+<span id="cb8-7"></span>
+<span id="cb8-8">plt.figure(figsize<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">6</span>, <span class="fl" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2.4</span>))</span>
-<span id="cb8-8">plt.plot(t, x)</span>
-<span id="cb8-9">plt.xlabel(<span class="st" style="color: #20794D;
+<span id="cb8-9">plt.plot(t, x)</span>
+<span id="cb8-10">plt.xlabel(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Time (s)"</span>)<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">;</span> plt.ylabel(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Amplitude"</span>)</span>
-<span id="cb8-10">plt.tight_layout()</span>
-<span id="cb8-11">plt.show()</span></code></pre></div></div>
+<span id="cb8-11">plt.tight_layout()</span>
+<span id="cb8-12">plt.show()</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div id="fig-signal" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-signal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="https://bkowshik.github.io/engram/cookbook_files/figure-html/fig-signal-output-1.png" class="img-fluid figure-img">
+<img src="https://bkowshik.github.io/engram/cookbook_files/figure-html/fig-signal-output-1.png" width="589" height="229" class="figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-signal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: A 10 Hz sine wave - a stand-in for a band-limited neural signal.
@@ -446,39 +461,47 @@ Figure&nbsp;1: A 10 Hz sine wave - a stand-in for a band-limited neural signal.
 <p>Figure&nbsp;1 shows the rendered output above, directly under the code that produced it. Control what each cell reveals with cell options:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
+<col style="width: 6%">
+<col style="width: 23%">
+<col style="width: 69%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Option</th>
 <th>Effect</th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>#| echo: false</code></td>
+<td><code>#     | echo: false</code></td>
 <td>hide the code, keep the output</td>
+<td></td>
 </tr>
 <tr class="even">
-<td><code>#| output: false</code></td>
+<td><code>#     | output: false</code></td>
 <td>run the code, hide the output</td>
+<td></td>
 </tr>
 <tr class="odd">
-<td><code>#| code-fold: true</code></td>
+<td><code>#     | code-fold: true</code></td>
 <td>keep the code but collapse it behind a toggle</td>
+<td></td>
 </tr>
 <tr class="even">
-<td><code>#| label: fig-x</code> / <code>tbl-x</code></td>
+<td><code>#     | label: fig-x</code>/<code>tbl-x</code></td>
 <td>make it cross-referenceable (the <code>fig-</code>/<code>tbl-</code> prefix matters)</td>
+<td></td>
 </tr>
 <tr class="odd">
-<td><code>#| fig-cap: "..."</code></td>
+<td><code>#     | fig-cap: "..."</code></td>
 <td>figure caption</td>
+<td></td>
 </tr>
 <tr class="even">
-<td><code>#| warning: false</code></td>
+<td><code>#     | warning: false</code></td>
 <td>suppress warnings in the render</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -500,47 +523,52 @@ font-style: inherit;">`@sec-setup`</span>.</span></code></pre></div></div>
 <p>Stack alternatives behind tabs - handy for “same idea, two frameworks”.</p>
 <p><strong>Source</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode md code-with-copy"><code class="sourceCode markdown"><span id="cb10-1">::: {.panel-tabset}</span>
-<span id="cb10-2"><span class="fu" style="color: #4758AB;
+<span id="cb10-2"></span>
+<span id="cb10-3"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">## NumPy</span></span>
-<span id="cb10-3"><span class="in" style="color: #5E5E5E;
+<span id="cb10-4"></span>
+<span id="cb10-5"><span class="in" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">```python</span></span>
-<span id="cb10-4"><span class="im" style="color: #00769E;
+<span id="cb10-6"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">as</span> np</span>
-<span id="cb10-5">x <span class="op" style="color: #5E5E5E;
+<span id="cb10-7">x <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> np.zeros((<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">22</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1125</span>))</span>
-<span id="cb10-6"><span class="in" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">```</span></span>
-<span id="cb10-7"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">## PyTorch</span></span>
 <span id="cb10-8"><span class="in" style="color: #5E5E5E;
 background-color: null;
+font-style: inherit;">```</span></span>
+<span id="cb10-9"></span>
+<span id="cb10-10"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">## PyTorch</span></span>
+<span id="cb10-11"></span>
+<span id="cb10-12"><span class="in" style="color: #5E5E5E;
+background-color: null;
 font-style: inherit;">```python</span></span>
-<span id="cb10-9"><span class="im" style="color: #00769E;
+<span id="cb10-13"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> torch</span>
-<span id="cb10-10">x <span class="op" style="color: #5E5E5E;
+<span id="cb10-14">x <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> torch.zeros(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">22</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1125</span>)</span>
-<span id="cb10-11"><span class="in" style="color: #5E5E5E;
+<span id="cb10-15"><span class="in" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">```</span></span>
-<span id="cb10-12">:::</span></code></pre></div></div>
+<span id="cb10-16"></span>
+<span id="cb10-17">:::</span></code></pre></div></div>
 <p><strong>Renders as</strong></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true" href="">NumPy</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false" href="">PyTorch</a></li></ul>
@@ -640,7 +668,7 @@ font-style: inherit;"> </span><span class="ch" style="color: #20794D;
 background-color: null;
 font-style: inherit;">true</span><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">        # rich link previews when shared</span></span>
+font-style: inherit;"> # rich link previews when shared</span></span>
 <span id="cb15-3"><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
@@ -670,7 +698,7 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">:</span><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">               # discussion thread per post, backed by GitHub Discussions</span></span>
+font-style: inherit;"> # discussion thread per post, backed by GitHub Discussions</span></span>
 <span id="cb15-6"><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
@@ -707,7 +735,7 @@ background-color: null;
 font-weight: bold;
 font-style: inherit;">:</span><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">               # a speaker deck from the same notebook cells</span></span>
+font-style: inherit;"> # a speaker deck from the same notebook cells</span></span>
 <span id="cb15-11"><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
@@ -744,7 +772,7 @@ font-style: inherit;"> </span><span class="ch" style="color: #20794D;
 background-color: null;
 font-style: inherit;">false</span><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">   # render saved notebook outputs; never launch a kernel</span></span></code></pre></div></div>
+font-style: inherit;"> # render saved notebook outputs; never launch a kernel</span></span></code></pre></div></div>
 <p>This keeps publishing trivial: do the heavy compute wherever suits you (Colab, a GPU box, locally), save the notebook <strong>with its outputs</strong>, and the build just renders those - no kernel, no dependencies, no dataset downloads on CI.</p>
 <p>If you would rather have the build execute notebooks and cache the results, the alternative is <code>execute: freeze: auto</code> plus a committed <code>_freeze/</code> directory - but that needs the full environment available at render time.</p>
 </section>
@@ -776,7 +804,7 @@ font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> </span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">""</span></span>
+font-style: inherit;">''</span></span>
 <span id="cb18-3"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">description</span><span class="kw" style="color: #003B4F;
@@ -786,7 +814,7 @@ font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> </span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">""</span></span>
+font-style: inherit;">''</span></span>
 <span id="cb18-4"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">date</span><span class="kw" style="color: #003B4F;
@@ -796,7 +824,7 @@ font-style: inherit;">:</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;"> </span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"YYYY-MM-DD"</span></span>
+font-style: inherit;">'YYYY-MM-DD'</span></span>
 <span id="cb18-5"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">date-modified</span><span class="kw" style="color: #003B4F;
@@ -854,6 +882,7 @@ font-style: inherit;">---</span></span></code></pre></div></div>
 <li><label><input type="checkbox">Papers cited with <code>@key</code>, entries added to <code>references.bib</code></label></li>
 <li><label><input type="checkbox">Cells reveal what you intend (<code>echo</code>/<code>output</code>/<code>code-fold</code>)</label></li>
 <li><label><input type="checkbox">Notebook saved <strong>with its outputs</strong> (the build never executes it)</label></li>
+<li><label><input type="checkbox">Plots are retina (<code>%config InlineBackend.figure_format = "retina"</code>)</label></li>
 <li><label><input type="checkbox">No private references (paths, personal notes)</label></li>
 </ul>
 </section>
@@ -862,8 +891,8 @@ font-style: inherit;">---</span></span></code></pre></div></div>
 <p>Append a line whenever you learn or adopt something new.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
+<col style="width: 8%">
+<col style="width: 91%">
 </colgroup>
 <thead>
 <tr class="header">

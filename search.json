@@ -25,21 +25,21 @@
     "href": "cookbook.html#front-matter-metadata",
     "title": "engram Cookbook",
     "section": "Front matter & metadata",
-    "text": "Front matter & metadata\nEvery notebook opens with a raw cell of YAML. This drives the title, the listing entry, categories, and per-document options. (The “rendered” effect here is the page’s title block and listing entry, not inline output.)\nSource\n---\ntitle: \"Short, specific title\"\ndescription: \"One line - shown in the listing and the social card.\"\ndate: \"2026-06-16\"\ndate-modified: last-modified   # auto-updates from file mtime - good for living docs\ncategories: [eeg, pytorch, bci] # power the tag filter + listing\nbibliography: references.bib     # enables @citations\ntoc: true\ncode-tools: true                # adds the \"view source / copy\" menu\nimage: thumbnail.png            # optional - used in the social preview card\n---"
+    "text": "Front matter & metadata\nEvery notebook opens with a raw cell of YAML. This drives the title, the listing entry, categories, and per-document options. (The “rendered” effect here is the page’s title block and listing entry, not inline output.)\nSource\n---\ntitle: 'Short, specific title'\ndescription: 'One line - shown in the listing and the social card.'\ndate: '2026-06-16'\ndate-modified: last-modified # auto-updates from file mtime - good for living docs\ncategories: [eeg, pytorch, bci] # power the tag filter + listing\nbibliography: references.bib # enables @citations\ntoc: true\ncode-tools: true # adds the \"view source / copy\" menu\nimage: thumbnail.png # optional - used in the social preview card\n---"
   },
   {
     "objectID": "cookbook.html#callouts",
     "href": "cookbook.html#callouts",
     "title": "engram Cookbook",
     "section": "Callouts",
-    "text": "Callouts\nColoured boxes for asides, insights, and gotchas. Flavours: note, tip, warning, important, caution.\nSource\n::: {.callout-tip}\n## Key insight\nThe takeaway in one or two sentences.\n:::\n\n::: {.callout-warning collapse=\"true\"}\n## Gotcha (collapsed by default)\nAdd `collapse=\"true\"` to fold long asides.\n:::\nRenders as\n\n\n\n\n\n\nTipKey insight\n\n\n\nThe takeaway in one or two sentences.\n\n\n\n\n\n\n\n\nWarningGotcha (collapsed by default)\n\n\n\n\n\nAdd collapse=\"true\" to fold long asides."
+    "text": "Callouts\nColoured boxes for asides, insights, and gotchas. Flavours: note, tip, warning, important, caution.\nSource\n::: {.callout-tip}\n\n## Key insight\n\nThe takeaway in one or two sentences.\n:::\n\n::: {.callout-warning collapse=\"true\"}\n\n## Gotcha (collapsed by default)\n\nAdd `collapse=\"true\"` to fold long asides.\n:::\nRenders as\n\n\n\n\n\n\nTipKey insight\n\n\n\nThe takeaway in one or two sentences.\n\n\n\n\n\n\n\n\nWarningGotcha (collapsed by default)\n\n\n\n\n\nAdd collapse=\"true\" to fold long asides."
   },
   {
     "objectID": "cookbook.html#math",
     "href": "cookbook.html#math",
     "title": "engram Cookbook",
     "section": "Math",
-    "text": "Math\nSource\nInline: $h_t = \\sigma(W x_t + b)$\n\n$$\n\\mathcal{L} = \\frac{1}{N}\\sum_{i=1}^{N} -\\,y_i \\log \\hat{y}_i\n$$ {#eq-nll}\n\nReference it with `@eq-nll`.\nRenders as\nInline: \\(h_t = \\sigma(W x_t + b)\\)\n\\[\n\\mathcal{L} = \\frac{1}{N}\\sum_{i=1}^{N} -\\,y_i \\log \\hat{y}_i\n\\tag{1}\\]\nThe negative log-likelihood in Equation 1 is the loss the Shallow ConvNet trains with."
+    "text": "Math\nSource\nInline: $h_t = \\sigma(W x_t + b)$\n\n$$\n\\mathcal{L} = \\frac{1}{N}\\sum_{i=1}^{N} -\\,y_i \\log \\hat{y}_i\n$$ {#eq-nll}\n\nReference it with `@eq-nll`.\n$$\nRenders as\nInline: \\(h_t = \\sigma(W x_t + b)\\)\n\\[\n\\mathcal{L} = \\frac{1}{N}\\sum_{i=1}^{N} -\\,y_i \\log \\hat{y}_i\n\\tag{1}\\]\nThe negative log-likelihood in Equation 1 is the loss the Shallow ConvNet trains with. $$"
   },
   {
     "objectID": "cookbook.html#citations-bibliography",
@@ -60,7 +60,7 @@
     "href": "cookbook.html#code-cells-source-output-together",
     "title": "engram Cookbook",
     "section": "Code cells: source + output together",
-    "text": "Code cells: source + output together\nA code cell is the clearest case: by default Quarto shows both the source and the output it produces. The cell below is labelled and captioned so the figure can be cross-referenced - and its code stays visible above the plot.\n\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nt = np.linspace(0, 1, 500)\nx = np.sin(2 * np.pi * 10 * t)\n\nplt.figure(figsize=(6, 2.4))\nplt.plot(t, x)\nplt.xlabel(\"Time (s)\"); plt.ylabel(\"Amplitude\")\nplt.tight_layout()\nplt.show()\n\n\n\n\n\n\n\nFigure 1: A 10 Hz sine wave - a stand-in for a band-limited neural signal.\n\n\n\n\n\nFigure 1 shows the rendered output above, directly under the code that produced it. Control what each cell reveals with cell options:\n\n\n\n\n\n\n\nOption\nEffect\n\n\n\n\n#| echo: false\nhide the code, keep the output\n\n\n#| output: false\nrun the code, hide the output\n\n\n#| code-fold: true\nkeep the code but collapse it behind a toggle\n\n\n#| label: fig-x / tbl-x\nmake it cross-referenceable (the fig-/tbl- prefix matters)\n\n\n#| fig-cap: \"...\"\nfigure caption\n\n\n#| warning: false\nsuppress warnings in the render\n\n\n\nThe default (echo: true) is exactly the “show both” behaviour - use the options above only when you deliberately want to hide one half."
+    "text": "Code cells: source + output together\nA code cell is the clearest case: by default Quarto shows both the source and the output it produces. The cell below is labelled and captioned so the figure can be cross-referenced - and its code stays visible above the plot.\nSet %config InlineBackend.figure_format = \"retina\" once near the top so the saved plots are crisp on hi-DPI screens.\n\nimport numpy as np\nimport matplotlib.pyplot as plt\n%config InlineBackend.figure_format = \"retina\"   # crisp hi-DPI plots\n\nt = np.linspace(0, 1, 500)\nx = np.sin(2 * np.pi * 10 * t)\n\nplt.figure(figsize=(6, 2.4))\nplt.plot(t, x)\nplt.xlabel(\"Time (s)\"); plt.ylabel(\"Amplitude\")\nplt.tight_layout()\nplt.show()\n\n\n\n\n\n\n\nFigure 1: A 10 Hz sine wave - a stand-in for a band-limited neural signal.\n\n\n\n\n\nFigure 1 shows the rendered output above, directly under the code that produced it. Control what each cell reveals with cell options:\n\n\n\n\n\n\n\n\nOption\nEffect\n\n\n\n\n\n#     | echo: false\nhide the code, keep the output\n\n\n\n#     | output: false\nrun the code, hide the output\n\n\n\n#     | code-fold: true\nkeep the code but collapse it behind a toggle\n\n\n\n#     | label: fig-x/tbl-x\nmake it cross-referenceable (the fig-/tbl- prefix matters)\n\n\n\n#     | fig-cap: \"...\"\nfigure caption\n\n\n\n#     | warning: false\nsuppress warnings in the render\n\n\n\n\nThe default (echo: true) is exactly the “show both” behaviour - use the options above only when you deliberately want to hide one half."
   },
   {
     "objectID": "cookbook.html#cross-references",
@@ -74,7 +74,7 @@
     "href": "cookbook.html#tabsets",
     "title": "engram Cookbook",
     "section": "Tabsets",
-    "text": "Tabsets\nStack alternatives behind tabs - handy for “same idea, two frameworks”.\nSource\n::: {.panel-tabset}\n## NumPy\n```python\nimport numpy as np\nx = np.zeros((22, 1125))\n```\n## PyTorch\n```python\nimport torch\nx = torch.zeros(22, 1125)\n```\n:::\nRenders as\n\nNumPyPyTorch\n\n\nimport numpy as np\nx = np.zeros((22, 1125))\n\n\nimport torch\nx = torch.zeros(22, 1125)"
+    "text": "Tabsets\nStack alternatives behind tabs - handy for “same idea, two frameworks”.\nSource\n::: {.panel-tabset}\n\n## NumPy\n\n```python\nimport numpy as np\nx = np.zeros((22, 1125))\n```\n\n## PyTorch\n\n```python\nimport torch\nx = torch.zeros(22, 1125)\n```\n\n:::\nRenders as\n\nNumPyPyTorch\n\n\nimport numpy as np\nx = np.zeros((22, 1125))\n\n\nimport torch\nx = torch.zeros(22, 1125)"
   },
   {
     "objectID": "cookbook.html#figures-captions-lightbox",
@@ -95,14 +95,14 @@
     "href": "cookbook.html#social-cards-comments-formats-site-level-config",
     "title": "engram Cookbook",
     "section": "Social cards, comments & formats (site-level config)",
-    "text": "Social cards, comments & formats (site-level config)\nThese are _quarto.yml settings rather than inline output:\nwebsite:\n  open-graph: true        # rich link previews when shared\n  twitter-card: true\n  comments:\n    giscus:               # discussion thread per post, backed by GitHub Discussions\n      repo: bkowshik/engram\n\nformat:\n  html: default\n  revealjs:               # a speaker deck from the same notebook cells\n    slide-level: 2\nRender a slide deck from any notebook with quarto render notebook.ipynb --to revealjs."
+    "text": "Social cards, comments & formats (site-level config)\nThese are _quarto.yml settings rather than inline output:\nwebsite:\n  open-graph: true # rich link previews when shared\n  twitter-card: true\n  comments:\n    giscus: # discussion thread per post, backed by GitHub Discussions\n      repo: bkowshik/engram\n\nformat:\n  html: default\n  revealjs: # a speaker deck from the same notebook cells\n    slide-level: 2\nRender a slide deck from any notebook with quarto render notebook.ipynb --to revealjs."
   },
   {
     "objectID": "cookbook.html#no-execution-on-build",
     "href": "cookbook.html#no-execution-on-build",
     "title": "engram Cookbook",
     "section": "No execution on build",
-    "text": "No execution on build\nengram sets this in _quarto.yml:\nexecute:\n  enabled: false   # render saved notebook outputs; never launch a kernel\nThis keeps publishing trivial: do the heavy compute wherever suits you (Colab, a GPU box, locally), save the notebook with its outputs, and the build just renders those - no kernel, no dependencies, no dataset downloads on CI.\nIf you would rather have the build execute notebooks and cache the results, the alternative is execute: freeze: auto plus a committed _freeze/ directory - but that needs the full environment available at render time."
+    "text": "No execution on build\nengram sets this in _quarto.yml:\nexecute:\n  enabled: false # render saved notebook outputs; never launch a kernel\nThis keeps publishing trivial: do the heavy compute wherever suits you (Colab, a GPU box, locally), save the notebook with its outputs, and the build just renders those - no kernel, no dependencies, no dataset downloads on CI.\nIf you would rather have the build execute notebooks and cache the results, the alternative is execute: freeze: auto plus a committed _freeze/ directory - but that needs the full environment available at render time."
   },
   {
     "objectID": "cookbook.html#colab-badge",
@@ -116,6 +116,6 @@
     "href": "index.html",
     "title": "engram",
     "section": "",
-    "text": "An engram is the physical trace a memory leaves in the brain — so this is where I store what I learn.\n\n\n\n\n\n\n\n\n\nengram Cookbook\n\n7 min\n\n\nreference\n\nquarto\n\n\n\nThe handbook for this repo - how it’s structured, the publishing workflow, and the Quarto authoring patterns I use, each shown as source + rendered output.\n\n\n\nJun 16, 2026\n\n\n\n\n\n\nNo matching items"
+    "text": "An engram is the physical trace a memory leaves in the brain — so this is where I store what I learn.\n\n\n\n\n\n\n\n\n\nengram Cookbook\n\n9 min\n\n\nreference\n\nquarto\n\n\n\nThe handbook for this repo - how it’s structured, the publishing workflow, and the Quarto authoring patterns I use, each shown as source + rendered output.\n\n\n\nJun 16, 2026\n\n\n\n\n\n\nNo matching items"
   }
 ]
