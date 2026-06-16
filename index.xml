@@ -9,12 +9,889 @@
 <link>https://bkowshik.github.io/engram/</link>
 <atom:link href="https://bkowshik.github.io/engram/index.xml" rel="self" type="application/rss+xml"/>
 <description>Notebooks and experiments from my work in NeuroAI and brain–computer interfaces.</description>
-<image>
-<url>https://bkowshik.github.io/engram/assets/engram-card.svg</url>
-<title>engram</title>
-<link>https://bkowshik.github.io/engram/</link>
-</image>
 <generator>quarto-1.9.38</generator>
-<lastBuildDate>Tue, 16 Jun 2026 08:57:43 GMT</lastBuildDate>
+<lastBuildDate>Tue, 16 Jun 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>engram Cookbook</title>
+  <link>https://bkowshik.github.io/engram/cookbook.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<section id="how-to-use-this-cookbook" class="level1">
+<h1>How to use this cookbook</h1>
+<p>This is the <strong>living handbook for engram</strong> - a reference I keep coming back to and extend as I learn. It covers two things:</p>
+<ul>
+<li><strong>How the repo works</strong> - structure, conventions, and the render/publish workflow.</li>
+<li><strong>How to author a notebook</strong> - the Quarto features worth using.</li>
+</ul>
+<p>For every visual feature in Part 2 you get two blocks: a <strong>Source</strong> block (the markup that produces it) and a <strong>Renders as</strong> block (what Quarto produces from it). Render locally with <code>quarto preview</code> to see the rendered halves live.</p>
+<p>When you adopt something new, add a section and append a line to the Update log.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A <code>.ipynb</code> carries Quarto front matter in a <strong>raw cell</strong> at the very top (the cell above this one). In a <code>.qmd</code> file the same YAML sits between <code>---</code> fences.</p>
+</div>
+</div>
+</section>
+<section id="part-1---the-repo" class="level1">
+<h1>Part 1 - The repo</h1>
+<section id="adding-a-new-notebook" class="level2">
+<h2 class="anchored" data-anchor-id="adding-a-new-notebook">Adding a new notebook</h2>
+<ol type="1">
+<li>Drop the <code>.ipynb</code> into the relevant project folder (or create a new folder).</li>
+<li>Add a front-matter raw cell at the top (see the starter).</li>
+<li>Add a Colab badge as the first markdown cell.</li>
+<li>Cite any papers with <code>@key</code> and add the entries to <code>references.bib</code>.</li>
+<li>Run the notebook and save it <strong>with its outputs</strong>, then commit and push.</li>
+</ol>
+<p>The notebook then appears automatically on the homepage listing - no manual index edit.</p>
+</section>
+<section id="render-publish-workflow" class="level2">
+<h2 class="anchored" data-anchor-id="render-publish-workflow">Render &amp; publish workflow</h2>
+<p>The build <strong>never executes notebooks</strong> — it renders the outputs already saved in each <code>.ipynb</code> (<code>execute: enabled: false</code> in <code>_quarto.yml</code>). The runner needs no Python, no dependencies, and never downloads data.</p>
+<p>So the rule is: <strong>run a notebook (locally or in Colab), save it with its outputs, then commit.</strong> A notebook committed without outputs renders with no figures.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">quarto</span> preview        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># live preview while editing (renders saved outputs)</span></span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">git</span> add . <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">&amp;&amp;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">git</span> commit <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-m</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Add notebook"</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">&amp;&amp;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">git</span> push</span></code></pre></div></div>
+<p>Pushing to <code>main</code> triggers the Action, which publishes to the <code>gh-pages</code> branch -&gt; GitHub Pages at <code>bkowshik.github.io/engram</code>.</p>
+</section>
+</section>
+<section id="part-2---authoring-with-quarto" class="level1">
+<h1>Part 2 - Authoring with Quarto</h1>
+<p>Each section below pairs the <strong>Source</strong> (what you write) with <strong>Renders as</strong> (what Quarto produces).</p>
+<section id="front-matter-metadata" class="level2">
+<h2 class="anchored" data-anchor-id="front-matter-metadata">Front matter &amp; metadata</h2>
+<p>Every notebook opens with a raw cell of YAML. This drives the title, the listing entry, categories, and per-document options. (The “rendered” effect here is the page’s title block and listing entry, not inline output.)</p>
+<p><strong>Source</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb2-1"><span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">---</span></span>
+<span id="cb2-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">title</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Short, specific title"</span></span>
+<span id="cb2-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">description</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"One line - shown in the listing and the social card."</span></span>
+<span id="cb2-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">date</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2026-06-16"</span></span>
+<span id="cb2-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">date-modified</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> last-modified</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">   # auto-updates from file mtime - good for living docs</span></span>
+<span id="cb2-6"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">categories</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">[</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">eeg</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">,</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> pytorch</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">,</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> bci</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">]</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"> # power the tag filter + listing</span></span>
+<span id="cb2-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">bibliography</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> references.bib</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">     # enables @citations</span></span>
+<span id="cb2-8"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">toc</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">true</span></span>
+<span id="cb2-9"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">code-tools</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">true</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">                # adds the "view source / copy" menu</span></span>
+<span id="cb2-10"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">image</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> thumbnail.png</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            # optional - used in the social preview card</span></span>
+<span id="cb2-11"><span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">---</span></span></code></pre></div></div>
+</section>
+<section id="callouts" class="level2">
+<h2 class="anchored" data-anchor-id="callouts">Callouts</h2>
+<p>Coloured boxes for asides, insights, and gotchas. Flavours: <code>note</code>, <code>tip</code>, <code>warning</code>, <code>important</code>, <code>caution</code>.</p>
+<p><strong>Source</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode md code-with-copy"><code class="sourceCode markdown"><span id="cb3-1">::: {.callout-tip}</span>
+<span id="cb3-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">## Key insight</span></span>
+<span id="cb3-3">The takeaway in one or two sentences.</span>
+<span id="cb3-4">:::</span>
+<span id="cb3-5"></span>
+<span id="cb3-6">::: {.callout-warning collapse="true"}</span>
+<span id="cb3-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">## Gotcha (collapsed by default)</span></span>
+<span id="cb3-8">Add <span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">`collapse="true"`</span> to fold long asides.</span>
+<span id="cb3-9">:::</span></code></pre></div></div>
+<p><strong>Renders as</strong></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Key insight
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The takeaway in one or two sentences.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Gotcha (collapsed by default)
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Add <code>collapse="true"</code> to fold long asides.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="math" class="level2">
+<h2 class="anchored" data-anchor-id="math">Math</h2>
+<p><strong>Source</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode md code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><span class="an" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">Inline:</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"> $h_t = \sigma(W x_t + b)$</span></span>
+<span id="cb4-2"></span>
+<span id="cb4-3">$$</span>
+<span id="cb4-4">\mathcal{L} = \frac{1}{N}\sum_{i=1}^{N} -\,y_i \log \hat{y}_i</span>
+<span id="cb4-5">$$ {#eq-nll}</span>
+<span id="cb4-6"></span>
+<span id="cb4-7">Reference it with <span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">`@eq-nll`</span>.</span></code></pre></div></div>
+<p><strong>Renders as</strong></p>
+<p>Inline: <img src="https://latex.codecogs.com/png.latex?h_t%20=%20%5Csigma(W%20x_t%20+%20b)"></p>
+<p><span id="eq-nll"><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathcal%7BL%7D%20=%20%5Cfrac%7B1%7D%7BN%7D%5Csum_%7Bi=1%7D%5E%7BN%7D%20-%5C,y_i%20%5Clog%20%5Chat%7By%7D_i%0A%5Ctag%7B1%7D"></span></p>
+<p>The negative log-likelihood in Equation&nbsp;1 is the loss the Shallow ConvNet trains with.</p>
+</section>
+<section id="citations-bibliography" class="level2">
+<h2 class="anchored" data-anchor-id="citations-bibliography">Citations &amp; bibliography</h2>
+<p>With <code>bibliography: references.bib</code> in the front matter, cite inline and Quarto builds the reference list automatically.</p>
+<p><strong>Source</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode md code-with-copy"><code class="sourceCode markdown"><span id="cb5-1">The Shallow ConvNet comes from @schirrmeister2017.</span>
+<span id="cb5-2">A parenthetical citation looks like <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">@schirrmeister2017</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span>.</span></code></pre></div></div>
+<p>…resolving against this <code>.bib</code> entry:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb6-1"><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">@article</span>{<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">schirrmeister2017</span>,</span>
+<span id="cb6-2">  <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">title</span>   = {Deep learning with convolutional neural networks for EEG decoding and visualization},</span>
+<span id="cb6-3">  <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">author</span>  = {Schirrmeister, Robin Tibor and others},</span>
+<span id="cb6-4">  <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">journal</span> = {Human Brain Mapping}, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">year</span> = {2017}, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">volume</span> = {38}, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">pages</span> = {5391--5420}</span>
+<span id="cb6-5">}</span></code></pre></div></div>
+<p><strong>Renders as</strong></p>
+<p>The Shallow ConvNet comes from <span class="citation" data-cites="schirrmeister2017">Schirrmeister et al. (2017)</span>. A parenthetical citation looks like <span class="citation" data-cites="schirrmeister2017">(Schirrmeister et al. 2017)</span>. (The full reference appears in the auto-generated list at the end of the page.)</p>
+</section>
+<section id="diagrams-mermaid-graphviz" class="level2">
+<h2 class="anchored" data-anchor-id="diagrams-mermaid-graphviz">Diagrams (Mermaid &amp; Graphviz)</h2>
+<p>Diagram-as-code - perfect for an architecture sketch instead of an ASCII block.</p>
+<p><strong>Source</strong> (4 outer backticks so the inner block shows literally)</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode md code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">```{mermaid}</span></span>
+<span id="cb7-2">flowchart LR</span>
+<span id="cb7-3">  X[<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">"</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">EEG (22 ch x 1125)</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">"</span>] --&gt; T[<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">"</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Temporal conv</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">"</span>]</span>
+<span id="cb7-4">  T --&gt; S[<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">"</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Spatial conv</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">"</span>] --&gt; P[<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">"</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Square -&gt; pool -&gt; log</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">"</span>] --&gt; C[<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">"</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">Classifier</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">"</span>]</span>
+<span id="cb7-5"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">```</span></span></code></pre></div></div>
+<p><strong>Renders as</strong></p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+  X["EEG (22 ch x 1125)"] --&gt; T["Temporal conv"]
+  T --&gt; S["Spatial conv"] --&gt; P["Square -&gt; pool -&gt; log"] --&gt; C["Classifier"]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="code-cells-source-output-together" class="level2">
+<h2 class="anchored" data-anchor-id="code-cells-source-output-together">Code cells: source + output together</h2>
+<p>A code cell is the clearest case: by default Quarto shows <strong>both</strong> the source and the output it produces. The cell below is labelled and captioned so the figure can be cross-referenced - and its code stays visible above the plot.</p>
+<div id="cell-fig-signal" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb8-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb8-3"></span>
+<span id="cb8-4">t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>)</span>
+<span id="cb8-5">x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.sin(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> np.pi <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> t)</span>
+<span id="cb8-6"></span>
+<span id="cb8-7">plt.figure(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2.4</span>))</span>
+<span id="cb8-8">plt.plot(t, x)</span>
+<span id="cb8-9">plt.xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time (s)"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span> plt.ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Amplitude"</span>)</span>
+<span id="cb8-10">plt.tight_layout()</span>
+<span id="cb8-11">plt.show()</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<div id="fig-signal" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-signal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://bkowshik.github.io/engram/cookbook_files/figure-html/fig-signal-output-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-signal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: A 10 Hz sine wave - a stand-in for a band-limited neural signal.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure&nbsp;1 shows the rendered output above, directly under the code that produced it. Control what each cell reveals with cell options:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Option</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>#| echo: false</code></td>
+<td>hide the code, keep the output</td>
+</tr>
+<tr class="even">
+<td><code>#| output: false</code></td>
+<td>run the code, hide the output</td>
+</tr>
+<tr class="odd">
+<td><code>#| code-fold: true</code></td>
+<td>keep the code but collapse it behind a toggle</td>
+</tr>
+<tr class="even">
+<td><code>#| label: fig-x</code> / <code>tbl-x</code></td>
+<td>make it cross-referenceable (the <code>fig-</code>/<code>tbl-</code> prefix matters)</td>
+</tr>
+<tr class="odd">
+<td><code>#| fig-cap: "..."</code></td>
+<td>figure caption</td>
+</tr>
+<tr class="even">
+<td><code>#| warning: false</code></td>
+<td>suppress warnings in the render</td>
+</tr>
+</tbody>
+</table>
+<p>The default (<code>echo: true</code>) is exactly the “show both” behaviour - use the options above only when you deliberately want to hide one half.</p>
+</section>
+<section id="cross-references" class="level2">
+<h2 class="anchored" data-anchor-id="cross-references">Cross-references</h2>
+<p><strong>Source</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode md code-with-copy"><code class="sourceCode markdown"><span id="cb9-1">See @fig-signal and @eq-nll. Sections work too: tag a heading <span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">`{#sec-setup}`</span>, then <span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">`@sec-setup`</span>.</span></code></pre></div></div>
+<p><strong>Renders as</strong></p>
+<p>See Figure&nbsp;1 and Equation&nbsp;1. Quarto numbers and links them automatically, so references never go stale when you reorder.</p>
+</section>
+<section id="tabsets" class="level2">
+<h2 class="anchored" data-anchor-id="tabsets">Tabsets</h2>
+<p>Stack alternatives behind tabs - handy for “same idea, two frameworks”.</p>
+<p><strong>Source</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode md code-with-copy"><code class="sourceCode markdown"><span id="cb10-1">::: {.panel-tabset}</span>
+<span id="cb10-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">## NumPy</span></span>
+<span id="cb10-3"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">```python</span></span>
+<span id="cb10-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb10-5">x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros((<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">22</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1125</span>))</span>
+<span id="cb10-6"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">```</span></span>
+<span id="cb10-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">## PyTorch</span></span>
+<span id="cb10-8"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">```python</span></span>
+<span id="cb10-9"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch</span>
+<span id="cb10-10">x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.zeros(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">22</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1125</span>)</span>
+<span id="cb10-11"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">```</span></span>
+<span id="cb10-12">:::</span></code></pre></div></div>
+<p><strong>Renders as</strong></p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true" href="">NumPy</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false" href="">PyTorch</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb11-2">x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros((<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">22</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1125</span>))</span></code></pre></div></div>
+</div>
+<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> torch</span>
+<span id="cb12-2">x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.zeros(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">22</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1125</span>)</span></code></pre></div></div>
+</div>
+</div>
+</div>
+</section>
+<section id="figures-captions-lightbox" class="level2">
+<h2 class="anchored" data-anchor-id="figures-captions-lightbox">Figures, captions &amp; lightbox</h2>
+<p><strong>Source</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode md code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><span class="al" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">![Shallow ConvNet, Figure 2 from the paper.](architecture.png)</span>{#fig-arch}</span></code></pre></div></div>
+<p>Enable click-to-zoom for all images via <code>_quarto.yml</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb14-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">format</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb14-2"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb14-3"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lightbox</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">true</span></span></code></pre></div></div>
+<p><strong>Renders as:</strong> a captioned, numbered figure (<code>Figure 1: ...</code>) that is cross-referenceable with <code>@fig-arch</code> and opens in a zoom overlay on click.</p>
+</section>
+<section id="listings-categories-search-site-level" class="level2">
+<h2 class="anchored" data-anchor-id="listings-categories-search-site-level">Listings, categories &amp; search (site-level)</h2>
+<p>These live in <code>_quarto.yml</code> / <code>index.qmd</code>, but every notebook feeds them:</p>
+<ul>
+<li><strong>Listing</strong> - <code>index.qmd</code> auto-indexes every <code>**/*.ipynb</code>, sorted by <code>date</code>.</li>
+<li><strong>Categories</strong> - the <code>categories:</code> in each notebook become clickable filters.</li>
+<li><strong>Full-text search</strong> - on by default; searches every notebook, client-side, free on GitHub Pages.</li>
+</ul>
+</section>
+<section id="social-cards-comments-formats-site-level-config" class="level2">
+<h2 class="anchored" data-anchor-id="social-cards-comments-formats-site-level-config">Social cards, comments &amp; formats (site-level config)</h2>
+<p>These are <code>_quarto.yml</code> settings rather than inline output:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb15-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">website</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb15-2"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">open-graph</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">true</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        # rich link previews when shared</span></span>
+<span id="cb15-3"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">twitter-card</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">true</span></span>
+<span id="cb15-4"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">comments</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb15-5"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">giscus</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">               # discussion thread per post, backed by GitHub Discussions</span></span>
+<span id="cb15-6"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">      </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">repo</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> bkowshik/engram</span></span>
+<span id="cb15-7"></span>
+<span id="cb15-8"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">format</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb15-9"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> default</span></span>
+<span id="cb15-10"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">revealjs</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">               # a speaker deck from the same notebook cells</span></span>
+<span id="cb15-11"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">    </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">slide-level</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span></code></pre></div></div>
+<p>Render a slide deck from any notebook with <code>quarto render notebook.ipynb --to revealjs</code>.</p>
+</section>
+<section id="no-execution-on-build" class="level2">
+<h2 class="anchored" data-anchor-id="no-execution-on-build">No execution on build</h2>
+<p>engram sets this in <code>_quarto.yml</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb16-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">execute</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb16-2"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">enabled</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">false</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">   # render saved notebook outputs; never launch a kernel</span></span></code></pre></div></div>
+<p>This keeps publishing trivial: do the heavy compute wherever suits you (Colab, a GPU box, locally), save the notebook <strong>with its outputs</strong>, and the build just renders those - no kernel, no dependencies, no dataset downloads on CI.</p>
+<p>If you would rather have the build execute notebooks and cache the results, the alternative is <code>execute: freeze: auto</code> plus a committed <code>_freeze/</code> directory - but that needs the full environment available at render time.</p>
+</section>
+<section id="colab-badge" class="level2">
+<h2 class="anchored" data-anchor-id="colab-badge">Colab badge</h2>
+<p><strong>Source</strong> (first markdown cell of a notebook)</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode md code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="al" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">](https://colab.research.google.com/github/bkowshik/engram/blob/main/FOLDER/NOTEBOOK.ipynb)</span></span></code></pre></div></div>
+<p><strong>Renders as:</strong> a clickable “Open In Colab” badge that launches the notebook in Google Colab.</p>
+</section>
+</section>
+<section id="copy-paste-starter" class="level1">
+<h1>Copy-paste starter</h1>
+<p>Front matter for a new notebook (raw cell at the top):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb18-1"><span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">---</span></span>
+<span id="cb18-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">title</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">""</span></span>
+<span id="cb18-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">description</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">""</span></span>
+<span id="cb18-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">date</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"YYYY-MM-DD"</span></span>
+<span id="cb18-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">date-modified</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> last-modified</span></span>
+<span id="cb18-6"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">categories</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">[]</span></span>
+<span id="cb18-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">bibliography</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> references.bib</span></span>
+<span id="cb18-8"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">toc</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">true</span></span>
+<span id="cb18-9"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">code-tools</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">true</span></span>
+<span id="cb18-10"><span class="pp" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">---</span></span></code></pre></div></div>
+<p><strong>Before you push:</strong></p>
+<ul class="task-list">
+<li><label><input type="checkbox">Front matter filled in (title, description, date, categories)</label></li>
+<li><label><input type="checkbox">Colab badge points at the right folder/filename</label></li>
+<li><label><input type="checkbox">Papers cited with <code>@key</code>, entries added to <code>references.bib</code></label></li>
+<li><label><input type="checkbox">Cells reveal what you intend (<code>echo</code>/<code>output</code>/<code>code-fold</code>)</label></li>
+<li><label><input type="checkbox">Notebook saved <strong>with its outputs</strong> (the build never executes it)</label></li>
+<li><label><input type="checkbox">No private references (paths, personal notes)</label></li>
+</ul>
+</section>
+<section id="update-log" class="level1">
+<h1>Update log</h1>
+<p>Append a line whenever you learn or adopt something new.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Date</th>
+<th>Change</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2026-06-16</td>
+<td>Created. Each Part 2 feature now shows Source + Renders-as; example plot cell shows code and output together.</td>
+</tr>
+</tbody>
+</table>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-schirrmeister2017" class="csl-entry">
+Schirrmeister, Robin Tibor, Jost Tobias Springenberg, Lukas Dominique Josef Fiederer, et al. 2017. <span>“Deep Learning with Convolutional Neural Networks for <span>EEG</span> Decoding and Visualization.”</span> <em>Human Brain Mapping</em> 38 (11): 5391–420. <a href="https://doi.org/10.1002/hbm.23730">https://doi.org/10.1002/hbm.23730</a>.
+</div>
+</div></section></div> ]]></description>
+  <category>reference</category>
+  <category>quarto</category>
+  <guid>https://bkowshik.github.io/engram/cookbook.html</guid>
+  <pubDate>Tue, 16 Jun 2026 00:00:00 GMT</pubDate>
+</item>
 </channel>
 </rss>

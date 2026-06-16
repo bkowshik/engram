@@ -89,21 +89,16 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./assets/engram.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-6753f90b7ec6bab75b6caad37da804fd.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-6606051a7cdbf1ff220017591bb3af84.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-6753f90b7ec6bab75b6caad37da804fd.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-21dfb6f5b24708782b3851273225b992.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -167,187 +162,25 @@ window.Quarto = {
 
 <meta property="og:title" content="engram Cookbook – engram">
 <meta property="og:description" content="The handbook for this repo - how it’s structured, the publishing workflow, and the Quarto authoring patterns I use, each shown as source + rendered output.">
-<meta property="og:image" content="https://bkowshik.github.io/engram/assets/engram-card.svg">
+<meta property="og:image" content="https://bkowshik.github.io/engram/cookbook_files/figure-html/fig-signal-output-1.png">
 <meta property="og:site_name" content="engram">
+<meta property="og:image:height" content="264">
+<meta property="og:image:width" content="660">
 <meta name="twitter:title" content="engram Cookbook – engram">
 <meta name="twitter:description" content="The handbook for this repo - how it’s structured, the publishing workflow, and the Quarto authoring patterns I use, each shown as source + rendered output.">
-<meta name="twitter:image" content="https://bkowshik.github.io/engram/assets/engram-card.svg">
+<meta name="twitter:image" content="https://bkowshik.github.io/engram/cookbook_files/figure-html/fig-signal-output-1.png">
+<meta name="twitter:image-height" content="264">
+<meta name="twitter:image-width" content="660">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
-<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
-    const toggleBodyColorMode = (bsSheetEl) => {
-      const mode = bsSheetEl.getAttribute("data-mode");
-      const bodyEl = window.document.querySelector("body");
-      if (mode === "dark") {
-        bodyEl.classList.add("quarto-dark");
-        bodyEl.classList.remove("quarto-light");
-      } else {
-        bodyEl.classList.add("quarto-light");
-        bodyEl.classList.remove("quarto-dark");
-      }
-    }
-    const toggleBodyColorPrimary = () => {
-      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
-      if (bsSheetEl) {
-        toggleBodyColorMode(bsSheetEl);
-      }
-    }
-    const setColorSchemeToggle = (alternate) => {
-      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-      for (let i=0; i < toggles.length; i++) {
-        const toggle = toggles[i];
-        if (toggle) {
-          if (alternate) {
-            toggle.classList.add("alternate");
-          } else {
-            toggle.classList.remove("alternate");
-          }
-        }
-      }
-    };
-    const toggleColorMode = (alternate) => {
-      // Switch the stylesheets
-      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
-      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-      manageTransitions('#quarto-margin-sidebar .nav-link', false);
-      if (alternate) {
-        // note: dark is layered on light, we don't disable primary!
-        enableStylesheet(alternateStylesheets);
-        for (const sheetNode of alternateStylesheets) {
-          if (sheetNode.id === "quarto-bootstrap") {
-            toggleBodyColorMode(sheetNode);
-          }
-        }
-      } else {
-        disableStylesheet(alternateStylesheets);
-        enableStylesheet(primaryStylesheets)
-        toggleBodyColorPrimary();
-      }
-      manageTransitions('#quarto-margin-sidebar .nav-link', true);
-      // Switch the toggles
-      setColorSchemeToggle(alternate)
-      // Hack to workaround the fact that safari doesn't
-      // properly recolor the scrollbar when toggling (#1455)
-      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-        manageTransitions("body", false);
-        window.scrollTo(0, 1);
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-          manageTransitions("body", true);
-        }, 40);
-      }
-    }
-    const disableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        stylesheet.rel = 'disabled-stylesheet';
-      }
-    }
-    const enableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
-          stylesheet.rel = 'stylesheet';
-        }
-      }
-    }
-    const manageTransitions = (selector, allowTransitions) => {
-      const els = window.document.querySelectorAll(selector);
-      for (let i=0; i < els.length; i++) {
-        const el = els[i];
-        if (allowTransitions) {
-          el.classList.remove('notransition');
-        } else {
-          el.classList.add('notransition');
-        }
-      }
-    }
-    const isFileUrl = () => {
-      return window.location.protocol === 'file:';
-    }
-    const hasAlternateSentinel = () => {
-      let styleSentinel = getColorSchemeSentinel();
-      if (styleSentinel !== null) {
-        return styleSentinel === "alternate";
-      } else {
-        return false;
-      }
-    }
-    const setStyleSentinel = (alternate) => {
-      const value = alternate ? "alternate" : "default";
-      if (!isFileUrl()) {
-        window.localStorage.setItem("quarto-color-scheme", value);
-      } else {
-        localAlternateSentinel = value;
-      }
-    }
-    const getColorSchemeSentinel = () => {
-      if (!isFileUrl()) {
-        const storageValue = window.localStorage.getItem("quarto-color-scheme");
-        return storageValue != null ? storageValue : localAlternateSentinel;
-      } else {
-        return localAlternateSentinel;
-      }
-    }
-    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-      let newTheme = '';
-      if(authorPrefersDark) {
-        newTheme = isAlternate ? baseTheme : alternateTheme;
-      } else {
-        newTheme = isAlternate ? alternateTheme : baseTheme;
-      }
-      const changeGiscusTheme = () => {
-        // From: https://github.com/giscus/giscus/issues/336
-        const sendMessage = (message) => {
-          const iframe = document.querySelector('iframe.giscus-frame');
-          if (!iframe) return;
-          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-        }
-        sendMessage({
-          setConfig: {
-            theme: newTheme
-          }
-        });
-      }
-      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-      if (isGiscussLoaded) {
-        changeGiscusTheme();
-      }
-    };
-    const authorPrefersDark = false;
-    const darkModeDefault = authorPrefersDark;
-      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-    // Dark / light mode switch
-    window.quartoToggleColorScheme = () => {
-      // Read the current dark / light value
-      let toAlternate = !hasAlternateSentinel();
-      toggleColorMode(toAlternate);
-      setStyleSentinel(toAlternate);
-      toggleGiscusIfUsed(toAlternate, darkModeDefault);
-      window.dispatchEvent(new Event('resize'));
-    };
-    // Switch to dark mode if need be
-    if (hasAlternateSentinel()) {
-      toggleColorMode(true);
-    } else {
-      toggleColorMode(false);
-    }
-  </script>
+<body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./assets/engram.svg" alt="" class="navbar-logo light-content">
-    <img src="./assets/engram.svg" alt="" class="navbar-logo dark-content">
-    </a>
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">engram</span>
     </a>
@@ -357,16 +190,6 @@ window.Quarto = {
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
-<span class="menu-text">Notebooks</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link active" href="./cookbook.html" aria-current="page"> 
-<span class="menu-text">Cookbook</span></a>
-  </li>  
-</ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
     <a class="nav-link" href="https://bkowshik.in"> <i class="bi bi-house-door" role="img" aria-label="Personal site">
@@ -384,11 +207,6 @@ window.Quarto = {
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://x.com/bkowshik"> <i class="bi bi-twitter-x" role="img" aria-label="X">
-</i> 
-<span class="menu-text"></span></a>
-  </li>  
-  <li class="nav-item compact">
     <a class="nav-link" href="./index.xml"> <i class="bi bi-rss" role="img" aria-label="RSS">
 </i> 
 <span class="menu-text"></span></a>
@@ -396,7 +214,6 @@ window.Quarto = {
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -429,7 +246,7 @@ window.Quarto = {
   <li><a href="#figures-captions-lightbox" id="toc-figures-captions-lightbox" class="nav-link" data-scroll-target="#figures-captions-lightbox">Figures, captions &amp; lightbox</a></li>
   <li><a href="#listings-categories-search-site-level" id="toc-listings-categories-search-site-level" class="nav-link" data-scroll-target="#listings-categories-search-site-level">Listings, categories &amp; search (site-level)</a></li>
   <li><a href="#social-cards-comments-formats-site-level-config" id="toc-social-cards-comments-formats-site-level-config" class="nav-link" data-scroll-target="#social-cards-comments-formats-site-level-config">Social cards, comments &amp; formats (site-level config)</a></li>
-  <li><a href="#freeze-cache-reproducibility" id="toc-freeze-cache-reproducibility" class="nav-link" data-scroll-target="#freeze-cache-reproducibility">Freeze &amp; cache (reproducibility)</a></li>
+  <li><a href="#no-execution-on-build" id="toc-no-execution-on-build" class="nav-link" data-scroll-target="#no-execution-on-build">No execution on build</a></li>
   <li><a href="#colab-badge" id="toc-colab-badge" class="nav-link" data-scroll-target="#colab-badge">Colab badge</a></li>
   </ul></li>
   <li><a href="#copy-paste-starter" id="toc-copy-paste-starter" class="nav-link" data-scroll-target="#copy-paste-starter">Copy-paste starter</a></li>
@@ -440,13 +257,12 @@ window.Quarto = {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">engram Cookbook</h1>
   <div class="quarto-categories">
-    <div class="quarto-category">meta</div>
     <div class="quarto-category">reference</div>
+    <div class="quarto-category">quarto</div>
   </div>
   </div>
 
@@ -513,16 +329,16 @@ Note
 <li>Add a front-matter raw cell at the top (see the <a href="#copy-paste-starter">starter</a>).</li>
 <li>Add a Colab badge as the first markdown cell.</li>
 <li>Cite any papers with <code>@key</code> and add the entries to <code>references.bib</code>.</li>
-<li><code>quarto render</code> locally so <code>_freeze/</code> is refreshed, then commit and push.</li>
+<li>Run the notebook and save it <strong>with its outputs</strong>, then commit and push.</li>
 </ol>
 <p>The notebook then appears automatically on the homepage listing - no manual index edit.</p>
 </section>
 <section id="render-publish-workflow" class="level2">
 <h2 class="anchored" data-anchor-id="render-publish-workflow">Render &amp; publish workflow</h2>
-<p>Builds are <strong>frozen</strong>: GitHub Actions never executes notebooks, it only assembles the site from the committed <code>_freeze/</code> cache. That keeps CI fast and dependency-free - but it means <em>you</em> must render locally before pushing.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> preview        <span class="co"># live preview while editing</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render         <span class="co"># refreshes _freeze/ with fresh outputs</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add . <span class="kw">&amp;&amp;</span> <span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"Add notebook"</span> <span class="kw">&amp;&amp;</span> <span class="fu">git</span> push</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The build <strong>never executes notebooks</strong> — it renders the outputs already saved in each <code>.ipynb</code> (<code>execute: enabled: false</code> in <code>_quarto.yml</code>). The runner needs no Python, no dependencies, and never downloads data.</p>
+<p>So the rule is: <strong>run a notebook (locally or in Colab), save it with its outputs, then commit.</strong> A notebook committed without outputs renders with no figures.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> preview        <span class="co"># live preview while editing (renders saved outputs)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add . <span class="kw">&amp;&amp;</span> <span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"Add notebook"</span> <span class="kw">&amp;&amp;</span> <span class="fu">git</span> push</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Pushing to <code>main</code> triggers the Action, which publishes to the <code>gh-pages</code> branch -&gt; GitHub Pages at <code>bkowshik.github.io/engram</code>.</p>
 </section>
 </section>
@@ -649,9 +465,7 @@ Note
 <section id="code-cells-source-output-together" class="level2">
 <h2 class="anchored" data-anchor-id="code-cells-source-output-together">Code cells: source + output together</h2>
 <p>A code cell is the clearest case: by default Quarto shows <strong>both</strong> the source and the output it produces. The cell below is labelled and captioned so the figure can be cross-referenced - and its code stays visible above the plot.</p>
-<div id="fig-signal" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-signal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div id="cell-fig-signal" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -663,11 +477,18 @@ Note
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Time (s)"</span>)<span class="op">;</span> plt.ylabel(<span class="st">"Amplitude"</span>)</span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div id="fig-signal" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-signal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="cookbook_files/figure-html/fig-signal-output-1.png" class="img-fluid figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-signal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-signal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: A 10 Hz sine wave - a stand-in for a band-limited neural signal.
 </figcaption>
 </figure>
+</div>
+</div>
 </div>
 <p><a href="#fig-signal" class="quarto-xref">Figure&nbsp;1</a> shows the rendered output above, directly under the code that produced it. Control what each cell reveals with cell options:</p>
 <table class="caption-top table">
@@ -783,12 +604,13 @@ Figure&nbsp;1
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">slide-level</span><span class="kw">:</span><span class="at"> </span><span class="dv">2</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Render a slide deck from any notebook with <code>quarto render notebook.ipynb --to revealjs</code>.</p>
 </section>
-<section id="freeze-cache-reproducibility" class="level2">
-<h2 class="anchored" data-anchor-id="freeze-cache-reproducibility">Freeze &amp; cache (reproducibility)</h2>
-<p>engram uses <strong>frozen</strong> builds, set in <code>_quarto.yml</code>:</p>
+<section id="no-execution-on-build" class="level2">
+<h2 class="anchored" data-anchor-id="no-execution-on-build">No execution on build</h2>
+<p>engram sets this in <code>_quarto.yml</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">execute</span><span class="kw">:</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">freeze</span><span class="kw">:</span><span class="at"> auto</span><span class="co">   # never re-execute on CI; rebuild only when the source changes</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>You render locally -&gt; <code>_freeze/</code> is refreshed -&gt; commit the notebook <strong>and</strong> <code>_freeze/</code> -&gt; the Action assembles the site without executing (no data, no GPU, no deps). Add <code>execute: cache: true</code> for local incremental caching of expensive cells.</p>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">enabled</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span><span class="co">   # render saved notebook outputs; never launch a kernel</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This keeps publishing trivial: do the heavy compute wherever suits you (Colab, a GPU box, locally), save the notebook <strong>with its outputs</strong>, and the build just renders those - no kernel, no dependencies, no dataset downloads on CI.</p>
+<p>If you would rather have the build execute notebooks and cache the results, the alternative is <code>execute: freeze: auto</code> plus a committed <code>_freeze/</code> directory - but that needs the full environment available at render time.</p>
 </section>
 <section id="colab-badge" class="level2">
 <h2 class="anchored" data-anchor-id="colab-badge">Colab badge</h2>
@@ -816,7 +638,7 @@ Figure&nbsp;1
 <li><label><input type="checkbox">Colab badge points at the right folder/filename</label></li>
 <li><label><input type="checkbox">Papers cited with <code>@key</code>, entries added to <code>references.bib</code></label></li>
 <li><label><input type="checkbox">Cells reveal what you intend (<code>echo</code>/<code>output</code>/<code>code-fold</code>)</label></li>
-<li><label><input type="checkbox"><code>quarto render</code> run locally so <code>_freeze/</code> is fresh</label></li>
+<li><label><input type="checkbox">Notebook saved <strong>with its outputs</strong> (the build never executes it)</label></li>
 <li><label><input type="checkbox">No private references (paths, personal notes)</label></li>
 </ul>
 </section>
@@ -853,19 +675,6 @@ Schirrmeister, Robin Tibor, Jost Tobias Springenberg, Lukas Dominique Josef Fied
 </div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
-    // Ensure there is a toggle, if there isn't float one in the top right
-    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-      const a = window.document.createElement('a');
-      a.classList.add('top-right');
-      a.classList.add('quarto-color-scheme-toggle');
-      a.href = "";
-      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-      const i = window.document.createElement("i");
-      i.classList.add('bi');
-      a.appendChild(i);
-      window.document.body.appendChild(a);
-    }
-    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -1316,32 +1125,6 @@ Schirrmeister, Robin Tibor, Jost Tobias Springenberg, Lukas Dominique Josef Fied
   });
   </script>
 </div> <!-- /content -->
-<footer class="footer">
-  <div class="nav-footer">
-    <div class="nav-footer-left">
-<p>© 2026 Bhargav Kowshik · built with <a href="https://quarto.org">Quarto</a></p>
-</div>   
-    <div class="nav-footer-center">
-      &nbsp;
-    </div>
-    <div class="nav-footer-right">
-      <ul class="footer-items list-unstyled">
-    <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/bkowshik/engram">
-      <i class="bi bi-github" role="img">
-</i> 
-    </a>
-  </li>  
-    <li class="nav-item compact">
-    <a class="nav-link" href="./index.xml">
-      <i class="bi bi-rss" role="img">
-</i> 
-    </a>
-  </li>  
-</ul>
-    </div>
-  </div>
-</footer>
 
 
 

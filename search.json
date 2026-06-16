@@ -11,14 +11,14 @@
     "href": "cookbook.html#adding-a-new-notebook",
     "title": "engram Cookbook",
     "section": "Adding a new notebook",
-    "text": "Adding a new notebook\n\nDrop the .ipynb into the relevant project folder (or create a new folder).\nAdd a front-matter raw cell at the top (see the starter).\nAdd a Colab badge as the first markdown cell.\nCite any papers with @key and add the entries to references.bib.\nquarto render locally so _freeze/ is refreshed, then commit and push.\n\nThe notebook then appears automatically on the homepage listing - no manual index edit."
+    "text": "Adding a new notebook\n\nDrop the .ipynb into the relevant project folder (or create a new folder).\nAdd a front-matter raw cell at the top (see the starter).\nAdd a Colab badge as the first markdown cell.\nCite any papers with @key and add the entries to references.bib.\nRun the notebook and save it with its outputs, then commit and push.\n\nThe notebook then appears automatically on the homepage listing - no manual index edit."
   },
   {
     "objectID": "cookbook.html#render-publish-workflow",
     "href": "cookbook.html#render-publish-workflow",
     "title": "engram Cookbook",
     "section": "Render & publish workflow",
-    "text": "Render & publish workflow\nBuilds are frozen: GitHub Actions never executes notebooks, it only assembles the site from the committed _freeze/ cache. That keeps CI fast and dependency-free - but it means you must render locally before pushing.\nquarto preview        # live preview while editing\nquarto render         # refreshes _freeze/ with fresh outputs\ngit add . && git commit -m \"Add notebook\" && git push\nPushing to main triggers the Action, which publishes to the gh-pages branch -&gt; GitHub Pages at bkowshik.github.io/engram."
+    "text": "Render & publish workflow\nThe build never executes notebooks — it renders the outputs already saved in each .ipynb (execute: enabled: false in _quarto.yml). The runner needs no Python, no dependencies, and never downloads data.\nSo the rule is: run a notebook (locally or in Colab), save it with its outputs, then commit. A notebook committed without outputs renders with no figures.\nquarto preview        # live preview while editing (renders saved outputs)\ngit add . && git commit -m \"Add notebook\" && git push\nPushing to main triggers the Action, which publishes to the gh-pages branch -&gt; GitHub Pages at bkowshik.github.io/engram."
   },
   {
     "objectID": "cookbook.html#front-matter-metadata",
@@ -60,7 +60,7 @@
     "href": "cookbook.html#code-cells-source-output-together",
     "title": "engram Cookbook",
     "section": "Code cells: source + output together",
-    "text": "Code cells: source + output together\nA code cell is the clearest case: by default Quarto shows both the source and the output it produces. The cell below is labelled and captioned so the figure can be cross-referenced - and its code stays visible above the plot.\n\n\n\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nt = np.linspace(0, 1, 500)\nx = np.sin(2 * np.pi * 10 * t)\n\nplt.figure(figsize=(6, 2.4))\nplt.plot(t, x)\nplt.xlabel(\"Time (s)\"); plt.ylabel(\"Amplitude\")\nplt.tight_layout()\nplt.show()\n\n\nFigure 1\n\n\n\nFigure 1 shows the rendered output above, directly under the code that produced it. Control what each cell reveals with cell options:\n\n\n\n\n\n\n\nOption\nEffect\n\n\n\n\n#| echo: false\nhide the code, keep the output\n\n\n#| output: false\nrun the code, hide the output\n\n\n#| code-fold: true\nkeep the code but collapse it behind a toggle\n\n\n#| label: fig-x / tbl-x\nmake it cross-referenceable (the fig-/tbl- prefix matters)\n\n\n#| fig-cap: \"...\"\nfigure caption\n\n\n#| warning: false\nsuppress warnings in the render\n\n\n\nThe default (echo: true) is exactly the “show both” behaviour - use the options above only when you deliberately want to hide one half."
+    "text": "Code cells: source + output together\nA code cell is the clearest case: by default Quarto shows both the source and the output it produces. The cell below is labelled and captioned so the figure can be cross-referenced - and its code stays visible above the plot.\n\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nt = np.linspace(0, 1, 500)\nx = np.sin(2 * np.pi * 10 * t)\n\nplt.figure(figsize=(6, 2.4))\nplt.plot(t, x)\nplt.xlabel(\"Time (s)\"); plt.ylabel(\"Amplitude\")\nplt.tight_layout()\nplt.show()\n\n\n\n\n\n\n\nFigure 1: A 10 Hz sine wave - a stand-in for a band-limited neural signal.\n\n\n\n\n\nFigure 1 shows the rendered output above, directly under the code that produced it. Control what each cell reveals with cell options:\n\n\n\n\n\n\n\nOption\nEffect\n\n\n\n\n#| echo: false\nhide the code, keep the output\n\n\n#| output: false\nrun the code, hide the output\n\n\n#| code-fold: true\nkeep the code but collapse it behind a toggle\n\n\n#| label: fig-x / tbl-x\nmake it cross-referenceable (the fig-/tbl- prefix matters)\n\n\n#| fig-cap: \"...\"\nfigure caption\n\n\n#| warning: false\nsuppress warnings in the render\n\n\n\nThe default (echo: true) is exactly the “show both” behaviour - use the options above only when you deliberately want to hide one half."
   },
   {
     "objectID": "cookbook.html#cross-references",
@@ -98,11 +98,11 @@
     "text": "Social cards, comments & formats (site-level config)\nThese are _quarto.yml settings rather than inline output:\nwebsite:\n  open-graph: true        # rich link previews when shared\n  twitter-card: true\n  comments:\n    giscus:               # discussion thread per post, backed by GitHub Discussions\n      repo: bkowshik/engram\n\nformat:\n  html: default\n  revealjs:               # a speaker deck from the same notebook cells\n    slide-level: 2\nRender a slide deck from any notebook with quarto render notebook.ipynb --to revealjs."
   },
   {
-    "objectID": "cookbook.html#freeze-cache-reproducibility",
-    "href": "cookbook.html#freeze-cache-reproducibility",
+    "objectID": "cookbook.html#no-execution-on-build",
+    "href": "cookbook.html#no-execution-on-build",
     "title": "engram Cookbook",
-    "section": "Freeze & cache (reproducibility)",
-    "text": "Freeze & cache (reproducibility)\nengram uses frozen builds, set in _quarto.yml:\nexecute:\n  freeze: auto   # never re-execute on CI; rebuild only when the source changes\nYou render locally -&gt; _freeze/ is refreshed -&gt; commit the notebook and _freeze/ -&gt; the Action assembles the site without executing (no data, no GPU, no deps). Add execute: cache: true for local incremental caching of expensive cells."
+    "section": "No execution on build",
+    "text": "No execution on build\nengram sets this in _quarto.yml:\nexecute:\n  enabled: false   # render saved notebook outputs; never launch a kernel\nThis keeps publishing trivial: do the heavy compute wherever suits you (Colab, a GPU box, locally), save the notebook with its outputs, and the build just renders those - no kernel, no dependencies, no dataset downloads on CI.\nIf you would rather have the build execute notebooks and cache the results, the alternative is execute: freeze: auto plus a committed _freeze/ directory - but that needs the full environment available at render time."
   },
   {
     "objectID": "cookbook.html#colab-badge",
@@ -116,20 +116,6 @@
     "href": "index.html",
     "title": "engram",
     "section": "",
-    "text": "An engram is the physical trace a memory leaves in the brain 🧠 — so this is where I store what I learn. I work in NeuroAI: I take raw neural signal and build the models that turn it into insight 💡. Each entry here is a runnable notebook — a paper reimplemented, a model dissected, an idea I was curious enough to chase down. I’m building toward brain–computer interfaces 🤖, and this is the groundwork, done in the open. 🚀"
-  },
-  {
-    "objectID": "index.html#featured",
-    "href": "index.html#featured",
-    "title": "engram",
-    "section": "⭐ Featured",
-    "text": "⭐ Featured\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "index.html#notebooks",
-    "href": "index.html#notebooks",
-    "title": "engram",
-    "section": "📓 Notebooks",
-    "text": "📓 Notebooks\n\n\n\n\nNo matching items"
+    "text": "An engram is the physical trace a memory leaves in the brain — so this is where I store what I learn.\n\n\n\n\n\n\n\n\n\nengram Cookbook\n\n7 min\n\n\nreference\n\nquarto\n\n\n\nThe handbook for this repo - how it’s structured, the publishing workflow, and the Quarto authoring patterns I use, each shown as source + rendered output.\n\n\n\nJun 16, 2026\n\n\n\n\n\n\nNo matching items"
   }
 ]
