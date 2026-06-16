@@ -1,16 +1,41 @@
 ---
 title: "engram"
-subtitle: "Notebooks and experiments from my work in NeuroAI and brain-computer interfaces."
-listing:
-  contents:
-    - "**/*.ipynb"
-  type: default
-  sort: "date desc"
-  categories: true
-  fields: [title, description, date, categories, reading-time]
+subtitle: "NeuroAI → Brain–Computer Interfaces 🧠"
+title-block-banner: true
 page-layout: full
+listing:
+  - id: featured
+    contents:
+      - "braindecode/shallow-convnet.ipynb"
+    type: grid
+    image-placeholder: assets/engram-card.svg
+    fields: [image, title, description, date, categories, reading-time]
+  - id: notebooks
+    contents:
+      - "**/*.ipynb"
+      - "!cookbook.ipynb"
+      - "!braindecode/shallow-convnet.ipynb"
+    type: grid
+    sort: "date desc"
+    categories: cloud
+    feed: true
+    image-placeholder: assets/engram-card.svg
+    fields: [image, title, description, date, categories, reading-time]
 ---
 
-An **engram** is the physical trace a memory leaves in the brain - so this is
-where I store what I learn. Each entry is a runnable notebook: a paper
-reimplemented, a model dissected, or an idea I was curious enough to chase down.
+An **engram** is the physical trace a memory leaves in the brain 🧠 — so this is
+where I store what I learn. I work in NeuroAI: I take raw neural signal and build
+the models that turn it into insight 💡. Each entry here is a runnable notebook —
+a paper reimplemented, a model dissected, an idea I was curious enough to chase
+down. I'm building toward brain–computer interfaces 🤖, and this is the
+groundwork, done in the open. 🚀
+
+## ⭐ Featured
+
+::: {#featured}
+:::
+
+## 📓 Notebooks
+
+::: {#notebooks}
+:::

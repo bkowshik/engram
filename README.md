@@ -6,19 +6,6 @@ Runnable notebooks and experiments from my work in **NeuroAI** and **brain–com
 
 📖 **Published site:** https://bkowshik.github.io/engram
 
-## Layout
-
-One folder per project; each holds its notebooks.
-
-```
-engram/
-├── _quarto.yml              # site config (frozen builds)
-├── index.qmd                # landing page + auto-listing of all notebooks
-├── braindecode/
-│   └── shallow-convnet.ipynb
-└── _freeze/                 # committed precomputed outputs (do not delete)
-```
-
 ## Adding a notebook
 
 1. Drop the `.ipynb` into the relevant project folder (or create a new one).
@@ -50,15 +37,3 @@ git add . && git commit -m "Add notebook" && git push
 ```
 
 Pushing to `main` triggers the Action, which publishes to the `gh-pages` branch → GitHub Pages.
-
-## One-time setup
-
-```bash
-# 1. Install Quarto: https://quarto.org/docs/get-started/
-# 2. Create the repo on GitHub (bkowshik/engram), then:
-git init && git add . && git commit -m "Initial commit: engram"
-git branch -M main
-git remote add origin git@github.com:bkowshik/engram.git
-git push -u origin main
-# 3. In GitHub repo Settings → Pages, set source to the gh-pages branch.
-```
