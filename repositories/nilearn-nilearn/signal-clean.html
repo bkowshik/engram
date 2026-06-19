@@ -6,6 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2026-06-19">
+<meta name="description" content="What nilearn.signal.clean actually does — detrend, standardize, filters, and ensure_finite — one knob at a time on a synthetic fMRI signal.">
 
 <title>nilearn.signal.clean — the five knobs – engram</title>
 <style>
@@ -111,13 +113,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <meta property="og:title" content="nilearn.signal.clean — the five knobs – engram">
-<meta property="og:description" content="Notebooks and experiments from my work in NeuroAI and brain–computer interfaces.">
+<meta property="og:description" content="What nilearn.signal.clean actually does — detrend, standardize, filters, and ensure_finite — one knob at a time on a synthetic fMRI signal.">
 <meta property="og:image" content="https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean_files/figure-html/cell-6-output-3.png">
 <meta property="og:site_name" content="engram">
 <meta property="og:image:height" content="908">
 <meta property="og:image:width" content="1143">
 <meta name="twitter:title" content="nilearn.signal.clean — the five knobs – engram">
-<meta name="twitter:description" content="Notebooks and experiments from my work in NeuroAI and brain–computer interfaces.">
+<meta name="twitter:description" content="What nilearn.signal.clean actually does — detrend, standardize, filters, and ensure_finite — one knob at a time on a synthetic fMRI signal.">
 <meta name="twitter:image" content="https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean_files/figure-html/cell-6-output-3.png">
 <meta name="twitter:image-height" content="908">
 <meta name="twitter:image-width" content="1143">
@@ -191,14 +193,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title"><code>nilearn.signal.clean</code> — the five knobs</h1>
-</div>
+  <div class="quarto-categories">
+    <div class="quarto-category">fmri</div>
+    <div class="quarto-category">nilearn</div>
+    <div class="quarto-category">preprocessing</div>
+  </div>
+  </div>
 
+<div>
+  <div class="description">
+    What nilearn.signal.clean actually does — detrend, standardize, filters, and ensure_finite — one knob at a time on a synthetic fMRI signal.
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 19, 2026</p>
+    </div>
+  </div>
   
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">June 19, 2026</p>
+    </div>
+  </div>
     
   </div>
   
@@ -207,6 +231,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://colab.research.google.com/github/bkowshik/engram/blob/main/repositories/nilearn-nilearn/signal-clean.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid figure-img"></a></p>
+<figcaption>Open In Colab</figcaption>
+</figure>
+</div>
 <div id="098a4781" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>pip install <span class="op">--</span>upgrade nilearn <span class="op">-</span>q <span class="op">--</span>progress<span class="op">-</span>bar off</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -222,45 +252,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rich <span class="im">import</span> pretty</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>pretty.install()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><code>nilearn.signal.clean(signals, ...)</code> is the workhorse fMRI preprocessing call. It bundles five operations behind one function, and they split into <strong>two categories</strong>:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 23%">
-<col style="width: 33%">
-<col style="width: 43%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Category</th>
-<th>Knob</th>
-<th>What it does</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Signal processing</td>
-<td><code>detrend</code></td>
-<td>remove slow drift</td>
-</tr>
-<tr class="even">
-<td>Signal processing</td>
-<td><code>standardize</code></td>
-<td>rescale to mean 0, std 1</td>
-</tr>
-<tr class="odd">
-<td>Signal processing</td>
-<td><code>high_pass</code> / <code>low_pass</code></td>
-<td>temporal frequency filters</td>
-</tr>
-<tr class="even">
-<td><strong>Data hygiene</strong></td>
-<td><code>ensure_finite</code></td>
-<td>replace <code>NaN</code> / <code>±Inf</code> with <code>0</code></td>
-</tr>
-</tbody>
-</table>
-<p>The way to build intuition: construct a synthetic signal out of <strong>known</strong> parts, plant one bad value, then turn a single knob at a time and watch what each one removes.</p>
-<p>This notebook grew out of <a href="https://github.com/facebookresearch/neuroai/issues/130">facebookresearch/neuroai#130</a> — a wrapper that skipped <code>clean()</code> entirely when the signal-processing knobs were off, silently disabling <code>ensure_finite</code> along with them. The cells below are <em>why that matters</em>.</p>
+<p><code>nilearn.signal.clean(signals, ...)</code> is the workhorse fMRI preprocessing call. It bundles five operations behind one function, and they split into <strong>two categories</strong>:| Category | Knob | What it does || —————– | ———————— | ——————————- || Signal processing | <code>detrend</code> | remove slow drift || Signal processing | <code>standardize</code> | rescale to mean 0, std 1 || Signal processing | <code>high_pass</code> / <code>low_pass</code> | temporal frequency filters || <strong>Data hygiene</strong> | <code>ensure_finite</code> | replace <code>NaN</code> / <code>±Inf</code> with <code>0</code> |The way to build intuition: construct a synthetic signal out of <strong>known</strong> parts, plant one bad value, then turn a single knob at a time and watch what each one removes.This notebook grew out of <a href="https://github.com/facebookresearch/neuroai/issues/130">facebookresearch/neuroai#130</a> — a wrapper that skipped <code>clean()</code> entirely when the signal-processing knobs were off, silently disabling <code>ensure_finite</code> along with them. The cells below are <em>why that matters</em>.</p>
 <div id="64c6d564" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># nilearn.signal.clean expects shape (time, n_features). One feature (one voxel).</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>t_r <span class="op">=</span> <span class="fl">2.0</span>                      <span class="co"># repetition time: 2 s per sample (a typical fMRI TR)</span></span>
