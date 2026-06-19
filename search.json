@@ -1,5 +1,54 @@
 [
   {
+    "objectID": "repositories/nilearn-nilearn/signal-clean.html",
+    "href": "repositories/nilearn-nilearn/signal-clean.html",
+    "title": "nilearn.signal.clean — the five knobs",
+    "section": "",
+    "text": "%pip install --upgrade nilearn -q --progress-bar off\nimport warnings\nwarnings.filterwarnings(\"ignore\")\n\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport nilearn.signal\n%config InlineBackend.figure_format = 'retina'\n\nfrom rich import pretty\npretty.install()\nnilearn.signal.clean(signals, ...) is the workhorse fMRI preprocessing call. It bundles five operations behind one function, and they split into two categories:\nThe way to build intuition: construct a synthetic signal out of known parts, plant one bad value, then turn a single knob at a time and watch what each one removes.\nThis notebook grew out of facebookresearch/neuroai#130 — a wrapper that skipped clean() entirely when the signal-processing knobs were off, silently disabling ensure_finite along with them. The cells below are why that matters.\n# nilearn.signal.clean expects shape (time, n_features). One feature (one voxel).\nt_r = 2.0                      # repetition time: 2 s per sample (a typical fMRI TR)\nn   = 200\nt   = np.arange(n) * t_r       # time axis in seconds\n\nbaseline   = 100.0                          # BOLD has a big DC offset\ndrift      = 0.05 * t                       # slow linear drift (scanner warm-up etc.)\nslow_signal= 3.0 * np.sin(2*np.pi*0.02 * t) # the \"neural\" signal we want to KEEP (0.02 Hz)\nfast_noise = 1.0 * np.sin(2*np.pi*0.20 * t) # high-frequency nuisance (0.20 Hz)\nclean_truth = baseline + drift + slow_signal + fast_noise\nsignal = clean_truth.copy().reshape(-1, 1)  # (time, 1)\nsignal[50, 0] = np.nan                       # drop in one non-finite value"
+  },
+  {
+    "objectID": "repositories/nilearn-nilearn/signal-clean.html#the-signal-and-the-planted-nan",
+    "href": "repositories/nilearn-nilearn/signal-clean.html#the-signal-and-the-planted-nan",
+    "title": "nilearn.signal.clean — the five knobs",
+    "section": "The signal and the planted NaN",
+    "text": "The signal and the planted NaN\nOur synthetic voxel is baseline (100) + linear drift + slow 0.02 Hz wave + fast 0.20 Hz noise. The slow wave is the “neural” signal we want to keep; drift and fast noise are the nuisances.\nWe then set one sample to NaN. That isn’t artificial paranoia — non-finite values are normal in fMRI: brain masks, registration/resampling, and surface projection all leave NaN where there is no valid data. Downstream models choke on a single NaN, so scrubbing it is routine hygiene, not an edge case.\n\ndef describe(name, x):\n    x = np.asarray(x).ravel()\n    print(f\"{name:&lt;28} mean={np.nanmean(x):7.3f}  std={np.nanstd(x):6.3f}  \"\n          f\"finite={np.isfinite(x).all()}\")\n\ndescribe(\"raw input\", signal)\n\nplt.title(\"Raw\")\nplt.plot(t, signal)\nplt.xlabel(\"Time (s)\")\nplt.ylabel(\"Amplitude\")\nplt.grid(True, linestyle=\":\", alpha=0.5)\nplt.show()\n\nraw input                    mean=109.975  std= 5.999  finite=False"
+  },
+  {
+    "objectID": "repositories/nilearn-nilearn/signal-clean.html#knob-1-ensure_finite-data-hygiene",
+    "href": "repositories/nilearn-nilearn/signal-clean.html#knob-1-ensure_finite-data-hygiene",
+    "title": "nilearn.signal.clean — the five knobs",
+    "section": "Knob 1 — ensure_finite: data hygiene",
+    "text": "Knob 1 — ensure_finite: data hygiene\nThe odd one out: it’s about data validity, not signal shape. It replaces NaN / +Inf / -Inf with 0 and touches nothing else — watch sample 50 go from NaN → 0.\nNote: in nilearn, ensure_finite defaults to False — you have to ask for it explicitly.\n\nonly_finite = nilearn.signal.clean(\n    signal,\n    detrend=False,\n    standardize=False,\n    ensure_finite=True\n)\ndescribe(\"ensure_finite only\", only_finite)\nprint(\"  -&gt; sample 50 was NaN, now:\", only_finite[50, 0])\n\nplt.title(\"Only Finite\")\nplt.plot(t, only_finite)\nplt.xlabel(\"Time (s)\")\nplt.ylabel(\"Amplitude\")\nplt.grid(True, linestyle=\":\", alpha=0.5)\nplt.show()\n\nensure_finite only           mean=109.425  std= 9.797  finite=True\n  -&gt; sample 50 was NaN, now: 0.0"
+  },
+  {
+    "objectID": "repositories/nilearn-nilearn/signal-clean.html#knob-2-detrend-removes-drift-and-amplifies-a-stray-nan",
+    "href": "repositories/nilearn-nilearn/signal-clean.html#knob-2-detrend-removes-drift-and-amplifies-a-stray-nan",
+    "title": "nilearn.signal.clean — the five knobs",
+    "section": "Knob 2 — detrend: removes drift, and amplifies a stray NaN",
+    "text": "Knob 2 — detrend: removes drift, and amplifies a stray NaN\ndetrend fits one straight line across the whole time series and subtracts it. So if you don’t set ensure_finite=True, the planted NaN poisons that least-squares fit and every sample comes back NaN — one bad value contaminates all 200. Try it: drop ensure_finite=True and re-run.\nLesson: a single non-finite value does not stay local once a real operation touches it. With ensure_finite=True (below), the drift is cleanly removed and the signal recenters near 0.\n\ndetrended = nilearn.signal.clean(\n    signal,\n    detrend=True,\n    standardize=False,\n    ensure_finite=True\n)\ndescribe(\"detrend\", detrended)\n\nplt.title(\"Detrended\")\nplt.plot(t, detrended)\nplt.xlabel(\"Time (s)\")\nplt.ylabel(\"Amplitude\")\nplt.grid(True, linestyle=\":\", alpha=0.5)\nplt.show()\n\ndetrend                      mean=  0.000  std= 7.732  finite=True"
+  },
+  {
+    "objectID": "repositories/nilearn-nilearn/signal-clean.html#knob-3-standardize-rescales-doesnt-reshape",
+    "href": "repositories/nilearn-nilearn/signal-clean.html#knob-3-standardize-rescales-doesnt-reshape",
+    "title": "nilearn.signal.clean — the five knobs",
+    "section": "Knob 3 — standardize: rescales, doesn’t reshape",
+    "text": "Knob 3 — standardize: rescales, doesn’t reshape\nstandardize is an affine transform: z = (x − mean) / std. Subtracting and dividing by constants changes the y-axis scale, not the shape — so plotted on its own it looks like nothing happened. The proof is in describe: mean goes ~100 → 0 and std → ~1. To see it, overlay raw vs standardized on twin y-axes: identical curves, different scales.\nThe spike at t≈100 is the NaN→0 value, now ~11 std below the baseline — a reminder that 0-fill is only “neutral” once the data is mean-centered.\n\n# standardize=True/False is deprecated in recent nilearn; \"zscore_sample\" is the modern spelling.\nstandardized = nilearn.signal.clean(\n    signal,\n    detrend=False,\n    ensure_finite=True,\n    standardize=\"zscore_sample\"\n)\ndescribe(\"standardize\", standardized)\n\nplt.title(\"Standardized\")\nplt.plot(t, standardized)\nplt.xlabel(\"Time (s)\")\nplt.ylabel(\"Amplitude\")\nplt.grid(True, linestyle=\":\", alpha=0.5)\nplt.show()\n\nstandardize                  mean=  0.000  std= 0.997  finite=True"
+  },
+  {
+    "objectID": "repositories/nilearn-nilearn/signal-clean.html#knob-4-high_pass-low_pass-temporal-filters",
+    "href": "repositories/nilearn-nilearn/signal-clean.html#knob-4-high_pass-low_pass-temporal-filters",
+    "title": "nilearn.signal.clean — the five knobs",
+    "section": "Knob 4 — high_pass / low_pass: temporal filters",
+    "text": "Knob 4 — high_pass / low_pass: temporal filters\nMirror images. High-pass keeps fast content and strips the slow drift/baseline, so the signal recenters on 0. Low-pass keeps the slow wave and smooths away the fast noise, leaving the baseline intact.\nWatch the NaN→0 sample behave like an impulse: high-pass exposes it as a spike to ≈ −100 (the ~100 baseline got subtracted), while low-pass smears it into a dip with ringing on either side. Same theme as detrend, now in the frequency domain — one bad sample bleeds into its neighbours.\n\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))\n\nhigh_passed = nilearn.signal.clean(\n    signal,\n    t_r=t_r,                # sampling interval — required for filtering\n    detrend=False,\n    standardize=False,\n    ensure_finite=True,\n    high_pass=0.01\n)\ndescribe(\"high_pass 0.01 Hz\", high_passed)\n\nax1.plot(t, high_passed)\nax1.set_title(\"High Passed\")\nax1.set_xlabel(\"Time (s)\")\nax1.set_ylabel(\"Amplitude\")\nax1.grid(True, linestyle=\"--\", alpha=0.5)\n\n\nlow_passed  = nilearn.signal.clean(\n    signal,\n    t_r=t_r,\n    detrend=False,\n    standardize=False,\n    ensure_finite=True,\n    low_pass=0.10\n)\ndescribe(\"low_pass 0.10 Hz\",  low_passed)\n\nax2.plot(t, low_passed)\nax2.set_title(\"Low Passed\")\nax2.set_xlabel(\"Time (s)\")\nax2.set_ylabel(\"Amplitude\")\nax2.grid(True, linestyle=\"--\", alpha=0.5)\n\nplt.tight_layout()\nplt.show()\n\nhigh_pass 0.01 Hz            mean=  0.026  std= 7.590  finite=True\nlow_pass 0.10 Hz             mean=109.422  std= 7.798  finite=True"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "engram",
+    "section": "",
+    "text": "An engram is the physical trace a memory leaves in the brain — so this is where I store what I learn.\n\n\n\n\n\n\n\n\n\nnilearn.signal.clean — the five knobs\n\n4 min\n\n\n\n\n\n\n\n\n\n\n\nengram Cookbook\n\n9 min\n\n\nreference\n\nquarto\n\n\n\nThe handbook for this repo - how it’s structured, the publishing workflow, and the Quarto authoring patterns I use, each shown as source + rendered output.\n\n\n\nJun 16, 2026\n\n\n\n\n\n\nNo matching items"
+  },
+  {
     "objectID": "cookbook.html",
     "href": "cookbook.html",
     "title": "engram Cookbook",
@@ -110,12 +159,5 @@
     "title": "engram Cookbook",
     "section": "Colab badge",
     "text": "Colab badge\nSource (first markdown cell of a notebook)\n[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bkowshik/engram/blob/main/FOLDER/NOTEBOOK.ipynb)\nRenders as: a clickable “Open In Colab” badge that launches the notebook in Google Colab."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "engram",
-    "section": "",
-    "text": "An engram is the physical trace a memory leaves in the brain — so this is where I store what I learn.\n\n\n\n\n\n\n\n\n\nengram Cookbook\n\n9 min\n\n\nreference\n\nquarto\n\n\n\nThe handbook for this repo - how it’s structured, the publishing workflow, and the Quarto authoring patterns I use, each shown as source + rendered output.\n\n\n\nJun 16, 2026\n\n\n\n\n\n\nNo matching items"
   }
 ]

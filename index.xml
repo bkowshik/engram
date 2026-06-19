@@ -922,5 +922,673 @@ Schirrmeister, Robin Tibor, Jost Tobias Springenberg, Lukas Dominique Josef Fied
   <guid>https://bkowshik.github.io/engram/cookbook.html</guid>
   <pubDate>Tue, 16 Jun 2026 00:00:00 GMT</pubDate>
 </item>
+<item>
+  <title>nilearn.signal.clean — the five knobs</title>
+  <link>https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<div id="098a4781" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>pip install <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">--</span>upgrade nilearn <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>q <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">--</span>progress<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>bar off</span></code></pre></div></div>
+</div>
+<div id="a7a8c902" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> warnings</span>
+<span id="cb2-2">warnings.filterwarnings(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"ignore"</span>)</span>
+<span id="cb2-3"></span>
+<span id="cb2-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb2-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb2-6"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> nilearn.signal</span>
+<span id="cb2-7"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>config InlineBackend.figure_format <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'retina'</span></span>
+<span id="cb2-8"></span>
+<span id="cb2-9"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> rich <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pretty</span>
+<span id="cb2-10">pretty.install()</span></code></pre></div></div>
+</div>
+<p><code>nilearn.signal.clean(signals, ...)</code> is the workhorse fMRI preprocessing call. It bundles five operations behind one function, and they split into <strong>two categories</strong>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 23%">
+<col style="width: 33%">
+<col style="width: 43%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Category</th>
+<th>Knob</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Signal processing</td>
+<td><code>detrend</code></td>
+<td>remove slow drift</td>
+</tr>
+<tr class="even">
+<td>Signal processing</td>
+<td><code>standardize</code></td>
+<td>rescale to mean 0, std 1</td>
+</tr>
+<tr class="odd">
+<td>Signal processing</td>
+<td><code>high_pass</code> / <code>low_pass</code></td>
+<td>temporal frequency filters</td>
+</tr>
+<tr class="even">
+<td><strong>Data hygiene</strong></td>
+<td><code>ensure_finite</code></td>
+<td>replace <code>NaN</code> / <code>±Inf</code> with <code>0</code></td>
+</tr>
+</tbody>
+</table>
+<p>The way to build intuition: construct a synthetic signal out of <strong>known</strong> parts, plant one bad value, then turn a single knob at a time and watch what each one removes.</p>
+<p>This notebook grew out of <a href="https://github.com/facebookresearch/neuroai/issues/130">facebookresearch/neuroai#130</a> — a wrapper that skipped <code>clean()</code> entirely when the signal-processing knobs were off, silently disabling <code>ensure_finite</code> along with them. The cells below are <em>why that matters</em>.</p>
+<div id="64c6d564" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># nilearn.signal.clean expects shape (time, n_features). One feature (one voxel).</span></span>
+<span id="cb3-2">t_r <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2.0</span>                      <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># repetition time: 2 s per sample (a typical fMRI TR)</span></span>
+<span id="cb3-3">n   <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">200</span></span>
+<span id="cb3-4">t   <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.arange(n) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> t_r       <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># time axis in seconds</span></span>
+<span id="cb3-5"></span>
+<span id="cb3-6">baseline   <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100.0</span>                          <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># BOLD has a big DC offset</span></span>
+<span id="cb3-7">drift      <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.05</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> t                       <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># slow linear drift (scanner warm-up etc.)</span></span>
+<span id="cb3-8">slow_signal<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3.0</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> np.sin(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>np.pi<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.02</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> t) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># the "neural" signal we want to KEEP (0.02 Hz)</span></span>
+<span id="cb3-9">fast_noise <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.0</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> np.sin(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>np.pi<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.20</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> t) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># high-frequency nuisance (0.20 Hz)</span></span></code></pre></div></div>
+</div>
+<div id="59b01a71" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">clean_truth <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> baseline <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> drift <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> slow_signal <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> fast_noise</span>
+<span id="cb4-2">signal <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> clean_truth.copy().reshape(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (time, 1)</span></span>
+<span id="cb4-3">signal[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.nan                       <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># drop in one non-finite value</span></span></code></pre></div></div>
+</div>
+<section id="the-signal-and-the-planted-nan" class="level2">
+<h2 class="anchored" data-anchor-id="the-signal-and-the-planted-nan">The signal and the planted <code>NaN</code></h2>
+<p>Our synthetic voxel is <code>baseline (100) + linear drift + slow 0.02 Hz wave + fast 0.20 Hz noise</code>. The slow wave is the “neural” signal we want to keep; drift and fast noise are the nuisances.</p>
+<p>We then set one sample to <code>NaN</code>. That isn’t artificial paranoia — non-finite values are <strong>normal</strong> in fMRI: brain masks, registration/resampling, and surface projection all leave <code>NaN</code> where there is no valid data. Downstream models choke on a single <code>NaN</code>, so scrubbing it is routine hygiene, not an edge case.</p>
+<div id="97cff454" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> describe(name, x):</span>
+<span id="cb5-2">    x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.asarray(x).ravel()</span>
+<span id="cb5-3">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>name<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:&lt;28}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> mean=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>np<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>nanmean(x)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:7.3f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  std=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>np<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>nanstd(x)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:6.3f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  "</span></span>
+<span id="cb5-4">          <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"finite=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>np<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>isfinite(x)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">all</span>()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb5-5"></span>
+<span id="cb5-6">describe(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"raw input"</span>, signal)</span>
+<span id="cb5-7"></span>
+<span id="cb5-8">plt.title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Raw"</span>)</span>
+<span id="cb5-9">plt.plot(t, signal)</span>
+<span id="cb5-10">plt.xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time (s)"</span>)</span>
+<span id="cb5-11">plt.ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Amplitude"</span>)</span>
+<span id="cb5-12">plt.grid(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">":"</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb5-13">plt.show()</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>raw input                    mean=109.975  std= 5.999  finite=False</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean_files/figure-html/cell-6-output-3.png" width="571" height="454" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="knob-1-ensure_finite-data-hygiene" class="level2">
+<h2 class="anchored" data-anchor-id="knob-1-ensure_finite-data-hygiene">Knob 1 — <code>ensure_finite</code>: data hygiene</h2>
+<p>The odd one out: it’s about data <em>validity</em>, not signal <em>shape</em>. It replaces <code>NaN</code> / <code>+Inf</code> / <code>-Inf</code> with <code>0</code> and touches nothing else — watch sample 50 go from <code>NaN</code> → <code>0</code>.</p>
+<p><strong>Note:</strong> in <code>nilearn</code>, <code>ensure_finite</code> <strong>defaults to <code>False</code></strong> — you have to ask for it explicitly.</p>
+<div id="a7fba116" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">only_finite <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nilearn.signal.clean(</span>
+<span id="cb7-2">    signal,</span>
+<span id="cb7-3">    detrend<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>,</span>
+<span id="cb7-4">    standardize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>,</span>
+<span id="cb7-5">    ensure_finite<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span></span>
+<span id="cb7-6">)</span>
+<span id="cb7-7">describe(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"ensure_finite only"</span>, only_finite)</span>
+<span id="cb7-8"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"  -&gt; sample 50 was NaN, now:"</span>, only_finite[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>])</span>
+<span id="cb7-9"></span>
+<span id="cb7-10">plt.title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Only Finite"</span>)</span>
+<span id="cb7-11">plt.plot(t, only_finite)</span>
+<span id="cb7-12">plt.xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time (s)"</span>)</span>
+<span id="cb7-13">plt.ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Amplitude"</span>)</span>
+<span id="cb7-14">plt.grid(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">":"</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb7-15">plt.show()</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ensure_finite only           mean=109.425  std= 9.797  finite=True
+  -&gt; sample 50 was NaN, now: 0.0</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean_files/figure-html/cell-7-output-3.png" width="571" height="454" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="knob-2-detrend-removes-drift-and-amplifies-a-stray-nan" class="level2">
+<h2 class="anchored" data-anchor-id="knob-2-detrend-removes-drift-and-amplifies-a-stray-nan">Knob 2 — <code>detrend</code>: removes drift, and amplifies a stray <code>NaN</code></h2>
+<p><code>detrend</code> fits one straight line across the <strong>whole</strong> time series and subtracts it. So if you <em>don’t</em> set <code>ensure_finite=True</code>, the planted <code>NaN</code> poisons that least-squares fit and <strong>every</strong> sample comes back <code>NaN</code> — one bad value contaminates all 200. Try it: drop <code>ensure_finite=True</code> and re-run.</p>
+<p>Lesson: a single non-finite value does not stay local once a real operation touches it. With <code>ensure_finite=True</code> (below), the drift is cleanly removed and the signal recenters near 0.</p>
+<div id="fe410ace" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">detrended <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nilearn.signal.clean(</span>
+<span id="cb9-2">    signal,</span>
+<span id="cb9-3">    detrend<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb9-4">    standardize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>,</span>
+<span id="cb9-5">    ensure_finite<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span></span>
+<span id="cb9-6">)</span>
+<span id="cb9-7">describe(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"detrend"</span>, detrended)</span>
+<span id="cb9-8"></span>
+<span id="cb9-9">plt.title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Detrended"</span>)</span>
+<span id="cb9-10">plt.plot(t, detrended)</span>
+<span id="cb9-11">plt.xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time (s)"</span>)</span>
+<span id="cb9-12">plt.ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Amplitude"</span>)</span>
+<span id="cb9-13">plt.grid(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">":"</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb9-14">plt.show()</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>detrend                      mean=  0.000  std= 7.732  finite=True</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean_files/figure-html/cell-8-output-3.png" width="583" height="454" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="knob-3-standardize-rescales-doesnt-reshape" class="level2">
+<h2 class="anchored" data-anchor-id="knob-3-standardize-rescales-doesnt-reshape">Knob 3 — <code>standardize</code>: rescales, doesn’t reshape</h2>
+<p><code>standardize</code> is an <strong>affine</strong> transform: <code>z = (x − mean) / std</code>. Subtracting and dividing by constants changes the <strong>y-axis scale</strong>, not the <strong>shape</strong> — so plotted on its own it looks like nothing happened. The proof is in <code>describe</code>: <code>mean</code> goes <code>~100 → 0</code> and <code>std → ~1</code>. To <em>see</em> it, overlay raw vs standardized on twin y-axes: identical curves, different scales.</p>
+<p>The spike at t≈100 is the <code>NaN→0</code> value, now ~11 std below the baseline — a reminder that <code>0</code>-fill is only “neutral” once the data is mean-centered.</p>
+<div id="a289dfee" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># standardize=True/False is deprecated in recent nilearn; "zscore_sample" is the modern spelling.</span></span>
+<span id="cb11-2">standardized <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nilearn.signal.clean(</span>
+<span id="cb11-3">    signal,</span>
+<span id="cb11-4">    detrend<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>,</span>
+<span id="cb11-5">    ensure_finite<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb11-6">    standardize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"zscore_sample"</span></span>
+<span id="cb11-7">)</span>
+<span id="cb11-8">describe(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"standardize"</span>, standardized)</span>
+<span id="cb11-9"></span>
+<span id="cb11-10">plt.title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Standardized"</span>)</span>
+<span id="cb11-11">plt.plot(t, standardized)</span>
+<span id="cb11-12">plt.xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time (s)"</span>)</span>
+<span id="cb11-13">plt.ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Amplitude"</span>)</span>
+<span id="cb11-14">plt.grid(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">":"</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb11-15">plt.show()</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>standardize                  mean=  0.000  std= 0.997  finite=True</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean_files/figure-html/cell-9-output-3.png" width="574" height="454" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="knob-4-high_pass-low_pass-temporal-filters" class="level2">
+<h2 class="anchored" data-anchor-id="knob-4-high_pass-low_pass-temporal-filters">Knob 4 — <code>high_pass</code> / <code>low_pass</code>: temporal filters</h2>
+<p>Mirror images. <strong>High-pass</strong> keeps fast content and strips the slow drift/baseline, so the signal recenters on 0. <strong>Low-pass</strong> keeps the slow wave and smooths away the fast noise, leaving the baseline intact.</p>
+<p>Watch the <code>NaN→0</code> sample behave like an <strong>impulse</strong>: high-pass exposes it as a spike to ≈ −100 (the ~100 baseline got subtracted), while low-pass smears it into a dip with <strong>ringing</strong> on either side. Same theme as detrend, now in the frequency domain — one bad sample bleeds into its neighbours.</p>
+<div id="b3e35b48" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">fig, (ax1, ax2) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>))</span>
+<span id="cb13-2"></span>
+<span id="cb13-3">high_passed <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nilearn.signal.clean(</span>
+<span id="cb13-4">    signal,</span>
+<span id="cb13-5">    t_r<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>t_r,                <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># sampling interval — required for filtering</span></span>
+<span id="cb13-6">    detrend<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>,</span>
+<span id="cb13-7">    standardize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>,</span>
+<span id="cb13-8">    ensure_finite<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb13-9">    high_pass<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span></span>
+<span id="cb13-10">)</span>
+<span id="cb13-11">describe(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"high_pass 0.01 Hz"</span>, high_passed)</span>
+<span id="cb13-12"></span>
+<span id="cb13-13">ax1.plot(t, high_passed)</span>
+<span id="cb13-14">ax1.set_title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"High Passed"</span>)</span>
+<span id="cb13-15">ax1.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time (s)"</span>)</span>
+<span id="cb13-16">ax1.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Amplitude"</span>)</span>
+<span id="cb13-17">ax1.grid(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"--"</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb13-18"></span>
+<span id="cb13-19"></span>
+<span id="cb13-20">low_passed  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nilearn.signal.clean(</span>
+<span id="cb13-21">    signal,</span>
+<span id="cb13-22">    t_r<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>t_r,</span>
+<span id="cb13-23">    detrend<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>,</span>
+<span id="cb13-24">    standardize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>,</span>
+<span id="cb13-25">    ensure_finite<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>,</span>
+<span id="cb13-26">    low_pass<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.10</span></span>
+<span id="cb13-27">)</span>
+<span id="cb13-28">describe(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"low_pass 0.10 Hz"</span>,  low_passed)</span>
+<span id="cb13-29"></span>
+<span id="cb13-30">ax2.plot(t, low_passed)</span>
+<span id="cb13-31">ax2.set_title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Low Passed"</span>)</span>
+<span id="cb13-32">ax2.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time (s)"</span>)</span>
+<span id="cb13-33">ax2.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Amplitude"</span>)</span>
+<span id="cb13-34">ax2.grid(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"--"</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb13-35"></span>
+<span id="cb13-36">plt.tight_layout()</span>
+<span id="cb13-37">plt.show()</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>high_pass 0.01 Hz            mean=  0.026  std= 7.590  finite=True
+low_pass 0.10 Hz             mean=109.422  std= 7.798  finite=True</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean_files/figure-html/cell-10-output-3.png" width="1190" height="388" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+
+ ]]></description>
+  <guid>https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean.html</guid>
+  <pubDate>Fri, 19 Jun 2026 04:43:42 GMT</pubDate>
+</item>
 </channel>
 </rss>
