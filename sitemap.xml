@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean.html</loc>
-    <lastmod>2026-06-19T05:02:25.408Z</lastmod>
-  </url>
-  <url>
-    <loc>https://bkowshik.github.io/engram/index.html</loc>
-    <lastmod>2026-06-19T05:02:25.405Z</lastmod>
+    <loc>https://bkowshik.github.io/engram/nilearn/signal-clean.html</loc>
+    <lastmod>2026-06-20T02:40:38.561Z</lastmod>
   </url>
   <url>
     <loc>https://bkowshik.github.io/engram/cookbook.html</loc>
-    <lastmod>2026-06-19T05:02:25.405Z</lastmod>
+    <lastmod>2026-06-20T02:40:38.556Z</lastmod>
+  </url>
+  <url>
+    <loc>https://bkowshik.github.io/engram/index.html</loc>
+    <lastmod>2026-06-20T02:40:38.556Z</lastmod>
+  </url>
+  <url>
+    <loc>https://bkowshik.github.io/engram/neuroai/fmricleaner-walkthrough.html</loc>
+    <lastmod>2026-06-20T02:40:38.557Z</lastmod>
   </url>
 </urlset>

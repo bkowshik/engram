@@ -12,8 +12,685 @@
 <generator>quarto-1.9.38</generator>
 <lastBuildDate>Fri, 19 Jun 2026 00:00:00 GMT</lastBuildDate>
 <item>
+  <title>FmriCleaner — nilearn.signal.clean, wrapped</title>
+  <link>https://bkowshik.github.io/engram/neuroai/fmricleaner-walkthrough.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<div id="0bb94dbf" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-06-19T04:43:34.445123Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-06-19T04:43:34.444891Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-06-19T04:43:35.124227Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-06-19T04:43:35.123732Z&quot;}}">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>pip install nilearn pydantic rich <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>q <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">--</span>progress<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>bar off</span></code></pre></div></div>
+</div>
+<div id="89016b42" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-06-19T04:43:35.126287Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-06-19T04:43:35.126124Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-06-19T04:43:35.558043Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-06-19T04:43:35.557609Z&quot;}}" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> warnings</span>
+<span id="cb2-2">warnings.filterwarnings(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"ignore"</span>)</span>
+<span id="cb2-3"></span>
+<span id="cb2-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb2-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb2-6"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pydantic</span>
+<span id="cb2-7"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> typing <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> Literal</span>
+<span id="cb2-8"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>config InlineBackend.figure_format <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"retina"</span></span>
+<span id="cb2-9"></span>
+<span id="cb2-10"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> rich <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pretty</span>
+<span id="cb2-11">pretty.install()</span></code></pre></div></div>
+</div>
+<p><a href="https://github.com/facebookresearch/neuroai"><code>neuralset</code></a> wraps <code>nilearn.signal.clean</code> in a tiny pydantic config object called <code>FmriCleaner</code>. If the five knobs (<code>detrend</code>, <code>standardize</code>, <code>high_pass</code> / <code>low_pass</code>, <code>ensure_finite</code>) are new to you, read <a href="../nilearn-nilearn/signal-clean.ipynb"><strong><code>signal-clean</code></strong></a> first — it builds the intuition from a synthetic signal. This notebook assumes that and focuses on what the <em>wrapper</em> adds:</p>
+<ul>
+<li>it’s a <strong>validated config object</strong>, not a bare function call;</li>
+<li>it flips the data contract to <strong><code>(n_features, time)</code></strong> (nilearn wants <code>(time, n_features)</code>);</li>
+<li>and it guards the <code>clean()</code> call in a way that — per <a href="https://github.com/facebookresearch/neuroai/issues/130"><strong>neuroai#130</strong></a> — silently drops <code>ensure_finite</code> when the signal-processing knobs are off.</li>
+</ul>
+<p>We reproduce the class inline so the guard is visible and the notebook runs without the full (torch-heavy) <code>neuralset</code> install.</p>
+<div id="01e2bc9a" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-06-19T04:43:35.559401Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-06-19T04:43:35.559265Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-06-19T04:43:35.593669Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-06-19T04:43:35.593225Z&quot;}}" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Reproduced verbatim from neuralset.extractors.neuro.FmriCleaner (neuralset 0.2.2)</span></span>
+<span id="cb3-2"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># so this notebook is self-contained. Source: github.com/facebookresearch/neuroai</span></span>
+<span id="cb3-3"></span>
+<span id="cb3-4"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">class</span> FmriCleaner(pydantic.BaseModel):</span>
+<span id="cb3-5">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""Configuration for fMRI signal cleaning."""</span></span>
+<span id="cb3-6"></span>
+<span id="cb3-7">    model_config <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> pydantic.ConfigDict(extra<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"forbid"</span>)</span>
+<span id="cb3-8">    standardize: Literal[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"zscore_sample"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"zscore"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"psc"</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">bool</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"zscore_sample"</span></span>
+<span id="cb3-9">    detrend: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">bool</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span></span>
+<span id="cb3-10">    high_pass: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span></span>
+<span id="cb3-11">    low_pass: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span></span>
+<span id="cb3-12">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">filter</span>: Literal[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"butterworth"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"cosine"</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span></span>
+<span id="cb3-13">    ensure_finite: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">bool</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span></span>
+<span id="cb3-14"></span>
+<span id="cb3-15">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> clean(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, data: np.ndarray, t_r: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">float</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-&gt;</span> np.ndarray:</span>
+<span id="cb3-16">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (</span>
+<span id="cb3-17">            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.detrend</span>
+<span id="cb3-18">            <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">or</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.standardize</span>
+<span id="cb3-19">            <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">or</span> (<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.high_pass <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">not</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span>)</span>
+<span id="cb3-20">            <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">or</span> (<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.low_pass <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">not</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span>)</span>
+<span id="cb3-21">        ):</span>
+<span id="cb3-22">            <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> nilearn.signal</span>
+<span id="cb3-23"></span>
+<span id="cb3-24">            data <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> data.T  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># set time as first dim</span></span>
+<span id="cb3-25">            shape <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> data.shape</span>
+<span id="cb3-26">            data <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> nilearn.signal.clean(</span>
+<span id="cb3-27">                data.reshape(shape[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),</span>
+<span id="cb3-28">                t_r<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>t_r,</span>
+<span id="cb3-29">                standardize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.standardize,</span>
+<span id="cb3-30">                high_pass<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.high_pass,</span>
+<span id="cb3-31">                low_pass<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.low_pass,</span>
+<span id="cb3-32">                <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">filter</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">filter</span>,</span>
+<span id="cb3-33">                detrend<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.detrend,</span>
+<span id="cb3-34">                ensure_finite<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.ensure_finite,</span>
+<span id="cb3-35">            )</span>
+<span id="cb3-36">            data <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> data.reshape(shape).T</span>
+<span id="cb3-37">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> data</span></code></pre></div></div>
+</div>
+<section id="a-config-object-not-a-function" class="level2">
+<h2 class="anchored" data-anchor-id="a-config-object-not-a-function">A config object, not a function</h2>
+<p><code>FmriCleaner</code> is a <code>pydantic.BaseModel</code>: every field is typed and validated, defaults are declared once, and <code>extra="forbid"</code> means a misspelled option is rejected at construction instead of silently ignored. This is the pattern <code>neuralset</code> uses for all its configs.</p>
+<div id="dac08dfb" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-06-19T04:43:35.594845Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-06-19T04:43:35.594768Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-06-19T04:43:35.598125Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-06-19T04:43:35.597649Z&quot;}}" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"fields &amp; defaults:"</span>)</span>
+<span id="cb4-2"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> name, field <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> FmriCleaner.model_fields.items():</span>
+<span id="cb4-3">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"  </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>name<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:&lt;14}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> default=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>field<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span>default<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!r}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb4-4"></span>
+<span id="cb4-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">default config:"</span>, FmriCleaner().model_dump())</span>
+<span id="cb4-6"></span>
+<span id="cb4-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># extra="forbid" -&gt; a typo is a hard error, not a silent no-op</span></span>
+<span id="cb4-8"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">try</span>:</span>
+<span id="cb4-9">    FmriCleaner(detrendd<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)          <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># note the typo</span></span>
+<span id="cb4-10"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">except</span> pydantic.ValidationError <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> e:</span>
+<span id="cb4-11">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">rejected unknown field 'detrendd':"</span>, e.errors()[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>][<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"type"</span>])</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>fields &amp; defaults:
+  standardize    default='zscore_sample'
+  detrend        default=True
+  high_pass      default=None
+  low_pass       default=None
+  filter         default=None
+  ensure_finite  default=True
+
+default config: {'standardize': 'zscore_sample', 'detrend': True, 'high_pass': None, 'low_pass': None, 'filter': None, 'ensure_finite': True}
+
+rejected unknown field 'detrendd': extra_forbidden</code></pre>
+</div>
+</div>
+</section>
+<section id="the-data-contract-n_features-time" class="level2">
+<h2 class="anchored" data-anchor-id="the-data-contract-n_features-time">The data contract: <code>(n_features, time)</code></h2>
+<p><code>nilearn.signal.clean</code> expects <strong>time first</strong> — <code>(time, n_features)</code>. <code>FmriCleaner.clean(data, t_r)</code> flips that: it takes <strong><code>(n_features, time)</code></strong> (the layout the rest of <code>neuralset</code> uses), transposes internally, cleans, then transposes back — so shape in equals shape out, for any number of feature dimensions. <code>t_r</code> is the repetition time in seconds (<code>1 / frequency</code>).</p>
+<p>We build the same synthetic voxel as the <code>signal-clean</code> notebook — <code>baseline + drift + slow wave + fast noise</code> — and plant one <code>NaN</code>, because non-finite values are normal in fMRI (masks, registration, surface projection all leave them behind).</p>
+<div id="4ceae731" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-06-19T04:43:35.599177Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-06-19T04:43:35.599086Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-06-19T04:43:55.143481Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-06-19T04:43:55.142977Z&quot;}}" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">t_r <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2.0</span>                       <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># seconds per sample (a typical fMRI TR)</span></span>
+<span id="cb6-2">n   <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">200</span></span>
+<span id="cb6-3">t   <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.arange(n) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> t_r</span>
+<span id="cb6-4"></span>
+<span id="cb6-5">truth  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.05</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>np.sin(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>np.pi<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.02</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>t) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>np.sin(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>np.pi<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.20</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>t)</span>
+<span id="cb6-6">signal <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> truth.copy().reshape(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>).astype(np.float32)   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># (n_features=1, time)</span></span>
+<span id="cb6-7">signal[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.nan                                     <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># one planted NaN</span></span>
+<span id="cb6-8"></span>
+<span id="cb6-9"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"signal shape (features, time):"</span>, signal.shape, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">" finite:"</span>, np.isfinite(signal).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">all</span>())</span>
+<span id="cb6-10"></span>
+<span id="cb6-11"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># shape is preserved for any number of feature dims:</span></span>
+<span id="cb6-12">multi <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.random.randn(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, n).astype(np.float32)</span>
+<span id="cb6-13"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"multi-voxel in:"</span>, multi.shape, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"-&gt; out:"</span>, FmriCleaner().clean(multi, t_r).shape)</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>signal shape (features, time): (1, 200)  finite: False
+multi-voxel in: (5, 200) -&gt; out: (5, 200)</code></pre>
+</div>
+</div>
+</section>
+<section id="the-guard-and-the-bug-130" class="level2">
+<h2 class="anchored" data-anchor-id="the-guard-and-the-bug-130">The guard — and the bug (#130)</h2>
+<p>The whole issue lives in <code>clean()</code>’s opening <code>if</code>: it calls <code>nilearn.signal.clean</code> <strong>only</strong> when a signal-processing knob (<code>detrend</code> / <code>standardize</code> / a filter) is on. But <code>ensure_finite</code> is forwarded <em>inside</em> that call — so when every signal-processing knob is off, the call is skipped and <code>ensure_finite</code> goes with it, <strong>even when you set it to <code>True</code></strong>.</p>
+<p>Watch the same planted <code>NaN</code> (sample 50) under three configs:</p>
+<div id="df2f2943" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-06-19T04:43:55.146955Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-06-19T04:43:55.146684Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-06-19T04:43:55.151323Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-06-19T04:43:55.150627Z&quot;}}" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> describe(name, x):</span>
+<span id="cb8-2">    x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.asarray(x).ravel()</span>
+<span id="cb8-3">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>name<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:&lt;48}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> finite=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>(np.isfinite(x).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">all</span>())<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:&lt;5}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> sample50=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:8.3f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb8-4"></span>
+<span id="cb8-5">describe(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"default (detrend+zscore)"</span>, FmriCleaner().clean(signal.copy(), t_r))</span>
+<span id="cb8-6">describe(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"detrend=F, standardize=F"</span>, FmriCleaner(detrend<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>, standardize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>).clean(signal.copy(), t_r))</span>
+<span id="cb8-7">describe(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"detrend=F, standardize=F, ensure_finite=True"</span>, FmriCleaner(detrend<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>, standardize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>, ensure_finite<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>).clean(signal.copy(), t_r))</span></code></pre></div></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>default (detrend+zscore)                         finite=True  sample50= -13.451
+detrend=F, standardize=F                         finite=False sample50=     nan
+detrend=F, standardize=F, ensure_finite=True     finite=False sample50=     nan</code></pre>
+</div>
+</div>
+<div id="e90207b2" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2026-06-19T04:43:55.152553Z&quot;,&quot;iopub.status.busy&quot;:&quot;2026-06-19T04:43:55.152461Z&quot;,&quot;iopub.status.idle&quot;:&quot;2026-06-19T04:43:55.441294Z&quot;,&quot;shell.execute_reply&quot;:&quot;2026-06-19T04:43:55.440809Z&quot;}}" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">default_out <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> FmriCleaner().clean(signal.copy(), t_r)</span>
+<span id="cb10-2">leaked_out  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> FmriCleaner(detrend<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>, standardize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>, ensure_finite<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>).clean(signal.copy(), t_r)</span>
+<span id="cb10-3"></span>
+<span id="cb10-4">fig, (ax1, ax2) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>))</span>
+<span id="cb10-5">ax1.plot(t, default_out.ravel())</span>
+<span id="cb10-6">ax1.set_title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"default — NaN scrubbed (finite)"</span>)</span>
+<span id="cb10-7">ax1.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time (s)"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span> ax1.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Amplitude"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span> ax1.grid(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">":"</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb10-8"></span>
+<span id="cb10-9">ax2.plot(t, leaked_out.ravel())</span>
+<span id="cb10-10">ax2.set_title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"ensure_finite=True ignored — gap at the NaN"</span>)</span>
+<span id="cb10-11">ax2.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Time (s)"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span> ax2.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Amplitude"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span> ax2.grid(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, linestyle<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">":"</span>, alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb10-12"></span>
+<span id="cb10-13">plt.tight_layout()</span>
+<span id="cb10-14">plt.show()</span></code></pre></div></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://bkowshik.github.io/engram/neuroai/fmricleaner-walkthrough_files/figure-html/cell-8-output-2.png" width="1189" height="389" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="the-takeaway" class="level2">
+<h2 class="anchored" data-anchor-id="the-takeaway">The takeaway</h2>
+<p><code>ensure_finite</code> is <strong>data hygiene</strong> — a different category from the signal-processing knobs (see <a href="../nilearn-nilearn/signal-clean.ipynb"><code>signal-clean</code></a> for why). The wrapper accidentally couples the two: by nesting <code>ensure_finite</code> inside a guard that only fires for <code>detrend</code> / <code>standardize</code> / filters, it turns “raw signal, just keep it finite” (<code>detrend=False, standardize=False, ensure_finite=True</code>) into “raw signal, <code>NaN</code>s and all” — and those <code>NaN</code>s detonate the moment a downstream model or fit touches them.</p>
+<p>The fix is to honour <code>ensure_finite</code> independently of the other knobs — either by adding it to the guard, or by handling finite-replacement explicitly when the guard is otherwise false. That design choice is the next step.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>fmri</category>
+  <category>nilearn</category>
+  <category>neuralset</category>
+  <category>neuroai</category>
+  <guid>https://bkowshik.github.io/engram/neuroai/fmricleaner-walkthrough.html</guid>
+  <pubDate>Fri, 19 Jun 2026 00:00:00 GMT</pubDate>
+</item>
+<item>
   <title>nilearn.signal.clean — the five knobs</title>
-  <link>https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean.html</link>
+  <link>https://bkowshik.github.io/engram/nilearn/signal-clean.html</link>
   <description><![CDATA[ 
 
 
@@ -275,7 +952,7 @@ font-style: inherit;">0.5</span>)</span>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean_files/figure-html/cell-6-output-3.png" width="571" height="454" class="figure-img"></p>
+<p><img src="https://bkowshik.github.io/engram/nilearn/signal-clean_files/figure-html/cell-6-output-3.png" width="571" height="454" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -351,7 +1028,7 @@ font-style: inherit;">0.5</span>)</span>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean_files/figure-html/cell-7-output-3.png" width="571" height="454" class="figure-img"></p>
+<p><img src="https://bkowshik.github.io/engram/nilearn/signal-clean_files/figure-html/cell-7-output-3.png" width="571" height="454" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -417,7 +1094,7 @@ font-style: inherit;">0.5</span>)</span>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean_files/figure-html/cell-8-output-3.png" width="583" height="454" class="figure-img"></p>
+<p><img src="https://bkowshik.github.io/engram/nilearn/signal-clean_files/figure-html/cell-8-output-3.png" width="583" height="454" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -486,7 +1163,7 @@ font-style: inherit;">0.5</span>)</span>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean_files/figure-html/cell-9-output-3.png" width="574" height="454" class="figure-img"></p>
+<p><img src="https://bkowshik.github.io/engram/nilearn/signal-clean_files/figure-html/cell-9-output-3.png" width="574" height="454" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -634,7 +1311,7 @@ low_pass 0.10 Hz             mean=109.422  std= 7.798  finite=True</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean_files/figure-html/cell-10-output-3.png" width="1190" height="388" class="figure-img"></p>
+<p><img src="https://bkowshik.github.io/engram/nilearn/signal-clean_files/figure-html/cell-10-output-3.png" width="1190" height="388" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -647,7 +1324,7 @@ low_pass 0.10 Hz             mean=109.422  std= 7.798  finite=True</code></pre>
   <category>fmri</category>
   <category>nilearn</category>
   <category>preprocessing</category>
-  <guid>https://bkowshik.github.io/engram/repositories/nilearn-nilearn/signal-clean.html</guid>
+  <guid>https://bkowshik.github.io/engram/nilearn/signal-clean.html</guid>
   <pubDate>Fri, 19 Jun 2026 00:00:00 GMT</pubDate>
 </item>
 <item>
