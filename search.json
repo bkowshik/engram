@@ -42,6 +42,27 @@
     "text": "Knob 4 — high_pass / low_pass: temporal filters\nMirror images. High-pass keeps fast content and strips the slow drift/baseline, so the signal recenters on 0. Low-pass keeps the slow wave and smooths away the fast noise, leaving the baseline intact.\nWatch the NaN→0 sample behave like an impulse: high-pass exposes it as a spike to ≈ −100 (the ~100 baseline got subtracted), while low-pass smears it into a dip with ringing on either side. Same theme as detrend, now in the frequency domain — one bad sample bleeds into its neighbours.\n\nfig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))\n\nhigh_passed = nilearn.signal.clean(\n    signal,\n    t_r=t_r,                # sampling interval — required for filtering\n    detrend=False,\n    standardize=False,\n    ensure_finite=True,\n    high_pass=0.01\n)\ndescribe(\"high_pass 0.01 Hz\", high_passed)\n\nax1.plot(t, high_passed)\nax1.set_title(\"High Passed\")\nax1.set_xlabel(\"Time (s)\")\nax1.set_ylabel(\"Amplitude\")\nax1.grid(True, linestyle=\"--\", alpha=0.5)\n\n\nlow_passed  = nilearn.signal.clean(\n    signal,\n    t_r=t_r,\n    detrend=False,\n    standardize=False,\n    ensure_finite=True,\n    low_pass=0.10\n)\ndescribe(\"low_pass 0.10 Hz\",  low_passed)\n\nax2.plot(t, low_passed)\nax2.set_title(\"Low Passed\")\nax2.set_xlabel(\"Time (s)\")\nax2.set_ylabel(\"Amplitude\")\nax2.grid(True, linestyle=\"--\", alpha=0.5)\n\nplt.tight_layout()\nplt.show()\n\nhigh_pass 0.01 Hz            mean=  0.026  std= 7.590  finite=True\nlow_pass 0.10 Hz             mean=109.422  std= 7.798  finite=True"
   },
   {
+    "objectID": "neuroai/README.html",
+    "href": "neuroai/README.html",
+    "title": "engram",
+    "section": "",
+    "text": "# Install from the main branch.\n%pip install -q \"git+https://github.com/facebookresearch/neuroai.git@main#subdirectory=neuralset-repo\"\n\n# Things are consistent when one uninstall's before installing from another branch.\n%pip uninstall -y neuralset\n\n# Install from a PR branch.\n%pip install -q \"git+https://github.com/facebookresearch/neuroai.git@sdascoli/remove_event_load_standardize#subdirectory=neuralset-repo\"\n\n\n# Alternative way to install all the NeuroAI packages.\n\n# To install from the main branch.\nB = \"git+https://github.com/facebookresearch/neuroai.git@main\"\n\n# To install from a feature / PR branch.\nB = \"git+https://github.com/bruAristimunha/neuroai.git@feat/auto-eeg-params\"\n\n%pip install -q --progress-bar off \"{B}#subdirectory=neuralset-repo\" \"{B}#subdirectory=neuraltrain-repo\" \"{B}#subdirectory=neuralbench-repo\" x_transformers\n\n\n%pip freeze | grep neuralbench"
+  },
+  {
+    "objectID": "braindecode/README.html",
+    "href": "braindecode/README.html",
+    "title": "engram",
+    "section": "",
+    "text": "%pip install --upgrade braindecode -q --progress-bar off\n\n\n%pip uninstall -y braindecode\n\n\nimport warnings;\nwarnings.filterwarnings(\"ignore\")\n\nimport inspect\nimport torch\nimport braindecode\n\nimport pandas as pd\n\nfrom braindecode.models.util import models_dict\nfrom braindecode.models import SCCNet, TCN, EEGNet, ShallowFBCSPNet, Deep4Net, EEGConformer\nfrom braindecode.models.base import EEGModuleMixin\n\n\nprint(\"braindecode\", braindecode.__version__)\nN_CHANS, N_TIMES, N_OUTPUTS, SFREQ = 22, 1000, 4, 250.0\n\n\nSCCNet(n_chans=N_CHANS, n_times=N_TIMES, n_outputs=N_OUTPUTS, sfreq=SFREQ)"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "engram",
+    "section": "",
+    "text": "An engram is the physical trace a memory leaves in the brain — so this is where I store what I learn.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFmriCleaner — nilearn.signal.clean, wrapped\n\n3 min\n\n\nfmri\n\nnilearn\n\nneuralset\n\nneuroai\n\n\n\nneuralset’s FmriCleaner silently drops ensure_finite when detrend/standardize/filters are all off — a walkthrough of facebookresearch/neuroai#130.\n\n\n\nJun 19, 2026\n\n\n\n\n\n\n\n\n\n\nnilearn.signal.clean — the five knobs\n\n4 min\n\n\nfmri\n\nnilearn\n\npreprocessing\n\n\n\nWhat nilearn.signal.clean actually does — detrend, standardize, filters, and ensure_finite — one knob at a time on a synthetic fMRI signal.\n\n\n\nJun 19, 2026\n\n\n\n\n\n\n\n\n\n\nengram Cookbook\n\n9 min\n\n\nreference\n\nquarto\n\n\n\nThe handbook for this repo - how it’s structured, the publishing workflow, and the Quarto authoring patterns I use, each shown as source + rendered output.\n\n\n\nJun 16, 2026\n\n\n\n\n\n\nNo matching items"
+  },
+  {
     "objectID": "cookbook.html",
     "href": "cookbook.html",
     "title": "engram Cookbook",
@@ -152,13 +173,6 @@
     "title": "engram Cookbook",
     "section": "Colab badge",
     "text": "Colab badge\nSource (first markdown cell of a notebook)\n[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bkowshik/engram/blob/main/FOLDER/NOTEBOOK.ipynb)\nRenders as: a clickable “Open In Colab” badge that launches the notebook in Google Colab."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "engram",
-    "section": "",
-    "text": "An engram is the physical trace a memory leaves in the brain — so this is where I store what I learn.\n\n\n\n\n\n\n\n\n\nFmriCleaner — nilearn.signal.clean, wrapped\n\n3 min\n\n\nfmri\n\nnilearn\n\nneuralset\n\nneuroai\n\n\n\nneuralset’s FmriCleaner silently drops ensure_finite when detrend/standardize/filters are all off — a walkthrough of facebookresearch/neuroai#130.\n\n\n\nJun 19, 2026\n\n\n\n\n\n\n\n\n\n\nnilearn.signal.clean — the five knobs\n\n4 min\n\n\nfmri\n\nnilearn\n\npreprocessing\n\n\n\nWhat nilearn.signal.clean actually does — detrend, standardize, filters, and ensure_finite — one knob at a time on a synthetic fMRI signal.\n\n\n\nJun 19, 2026\n\n\n\n\n\n\n\n\n\n\nengram Cookbook\n\n9 min\n\n\nreference\n\nquarto\n\n\n\nThe handbook for this repo - how it’s structured, the publishing workflow, and the Quarto authoring patterns I use, each shown as source + rendered output.\n\n\n\nJun 16, 2026\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "neuroai/fmricleaner-walkthrough.html",

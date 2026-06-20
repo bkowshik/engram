@@ -2,6 +2,8 @@
   {
     "listing": "/index.html",
     "items": [
+      "/braindecode/README.html",
+      "/neuroai/README.html",
       "/neuroai/fmricleaner-walkthrough.html",
       "/nilearn/signal-clean.html",
       "/cookbook.html"
