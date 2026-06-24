@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://bkowshik.github.io/engram/nilearn/signal-clean.html</loc>
-    <lastmod>2026-06-23T11:11:04.623Z</lastmod>
-  </url>
-  <url>
-    <loc>https://bkowshik.github.io/engram/neuroai/README.html</loc>
-    <lastmod>2026-06-23T11:11:04.618Z</lastmod>
-  </url>
-  <url>
-    <loc>https://bkowshik.github.io/engram/braindecode/README.html</loc>
-    <lastmod>2026-06-23T11:11:04.618Z</lastmod>
-  </url>
-  <url>
-    <loc>https://bkowshik.github.io/engram/index.html</loc>
-    <lastmod>2026-06-23T11:11:04.618Z</lastmod>
-  </url>
-  <url>
-    <loc>https://bkowshik.github.io/engram/cookbook.html</loc>
-    <lastmod>2026-06-23T11:11:04.618Z</lastmod>
+    <loc>https://bkowshik.github.io/engram/pytorch/01_tutorial.html</loc>
+    <lastmod>2026-06-24T04:47:27.597Z</lastmod>
   </url>
   <url>
     <loc>https://bkowshik.github.io/engram/neuroai/fmricleaner-walkthrough.html</loc>
-    <lastmod>2026-06-23T11:11:04.620Z</lastmod>
+    <lastmod>2026-06-24T04:47:27.593Z</lastmod>
+  </url>
+  <url>
+    <loc>https://bkowshik.github.io/engram/cookbook.html</loc>
+    <lastmod>2026-06-24T04:47:27.591Z</lastmod>
+  </url>
+  <url>
+    <loc>https://bkowshik.github.io/engram/index.html</loc>
+    <lastmod>2026-06-24T04:47:27.591Z</lastmod>
+  </url>
+  <url>
+    <loc>https://bkowshik.github.io/engram/braindecode/README.html</loc>
+    <lastmod>2026-06-24T04:47:27.591Z</lastmod>
+  </url>
+  <url>
+    <loc>https://bkowshik.github.io/engram/neuroai/README.html</loc>
+    <lastmod>2026-06-24T04:47:27.591Z</lastmod>
+  </url>
+  <url>
+    <loc>https://bkowshik.github.io/engram/nilearn/signal-clean.html</loc>
+    <lastmod>2026-06-24T04:47:27.597Z</lastmod>
   </url>
 </urlset>

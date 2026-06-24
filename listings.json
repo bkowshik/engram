@@ -4,6 +4,7 @@
     "items": [
       "/braindecode/README.html",
       "/neuroai/README.html",
+      "/pytorch/01_tutorial.html",
       "/neuroai/fmricleaner-walkthrough.html",
       "/nilearn/signal-clean.html",
       "/cookbook.html"
