@@ -2239,6 +2239,384 @@ Schirrmeister, Robin Tibor, Jost Tobias Springenberg, Lukas Dominique Josef Fied
   <pubDate>Tue, 16 Jun 2026 00:00:00 GMT</pubDate>
 </item>
 <item>
+  <title>Events</title>
+  <link>https://bkowshik.github.io/engram/neuroai/neuralset/01_tutorial.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<div id="933e3114" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Hello, brain!'</span>)</span></code></pre></div></div>
+</div>
+<div id="d370bd15" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">B <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"git+https://github.com/bkowshik/neuroai.git@main"</span></span>
+<span id="cb2-2"></span>
+<span id="cb2-3"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span>uv pip install <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>q <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">--</span>system <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb2-4">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"moabb"</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb2-5">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"neuralset[all] @ </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{B}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">#subdirectory=neuralset-repo"</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb2-6">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{B}</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">#subdirectory=neuralfetch-repo"</span></span>
+<span id="cb2-7"></span>
+<span id="cb2-8"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span>uv pip install <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>q <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">--</span>system globus<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>sdk</span></code></pre></div></div>
+</div>
+<div id="e5bfcb2b" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span>uv pip freeze <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span> grep neural</span></code></pre></div></div>
+</div>
+<div id="83bc2b3c" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> os, getpass</span>
+<span id="cb4-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> pandas <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> pd</span>
+<span id="cb4-3"></span>
+<span id="cb4-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> neuralset <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> ns</span>
+<span id="cb4-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> neuralset <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> events</span>
+<span id="cb4-6"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> neuralset.events <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> etypes</span>
+<span id="cb4-7"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> neuralfetch.utils <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> compute_study_info</span>
+<span id="cb4-8"></span>
+<span id="cb4-9"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> globus_sdk</span></code></pre></div></div>
+</div>
+<div id="eea85221" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># To download data from https://www.globus.org/ Ex: Brennan2019Hierarchical</span></span>
+<span id="cb5-2">os.environ[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"NEURALFETCH_GLOBUS_CLIENT_ID"</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> getpass.getpass(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Globus Client UUID: "</span>)</span>
+<span id="cb5-3">os.environ[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"NEURALFETCH_GLOBUS_CLIENT_SECRET"</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> getpass.getpass(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Globus Client Secret: "</span>)</span></code></pre></div></div>
+</div>
+<div id="3320954a" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(etypes.Event._CLASSES), <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(etypes.Event._CLASSES.keys())[:<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>]</span></code></pre></div></div>
+</div>
+<div id="53c45b1d" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create event from a dictionary</span></span>
+<span id="cb7-2">data <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb7-3">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"type"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Word"</span>,</span>
+<span id="cb7-4">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"start"</span>: <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.0</span>,</span>
+<span id="cb7-5">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"timeline"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"run-01"</span>,</span>
+<span id="cb7-6">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"text"</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"hello"</span>,</span>
+<span id="cb7-7">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"surprisal"</span>: <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3.2</span>,</span>
+<span id="cb7-8">}</span>
+<span id="cb7-9">event <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> etypes.Event.from_dict(data)</span>
+<span id="cb7-10">event</span></code></pre></div></div>
+</div>
+<div id="64ecdd31" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create event using the class</span></span>
+<span id="cb8-2">word <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> etypes.Word(</span>
+<span id="cb8-3">    start<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5</span>,</span>
+<span id="cb8-4">    duration<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>,</span>
+<span id="cb8-5">    timeline<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sub-01_run-01"</span>,</span>
+<span id="cb8-6">    text<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"hello"</span></span>
+<span id="cb8-7">)</span>
+<span id="cb8-8">word</span></code></pre></div></div>
+</div>
+<div id="f3549ccd" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a timeline using a Pandas DataFrame</span></span>
+<span id="cb9-2">tl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sub-01_run-01"</span></span>
+<span id="cb9-3">rows <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [</span>
+<span id="cb9-4">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Word"</span>, start<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10.5</span>, duration<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>, timeline<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>tl, text<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"The"</span>),</span>
+<span id="cb9-5">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Word"</span>, start<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">11.0</span>, duration<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.4</span>, timeline<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>tl, text<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"cat"</span>),</span>
+<span id="cb9-6">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Word"</span>, start<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">11.6</span>, duration<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>, timeline<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>tl, text<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"sat"</span>),</span>
+<span id="cb9-7">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">dict</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">type</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Sentence"</span>, start<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10.5</span>, duration<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.4</span>, timeline<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>tl, text<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"The cat sat"</span>, language<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'en'</span>, subject<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'bkowshik'</span>, session<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, run<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb9-8">]</span>
+<span id="cb9-9">df <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> events.standardize_events(pd.DataFrame(rows))</span>
+<span id="cb9-10">df</span></code></pre></div></div>
+</div>
+<section id="studies" class="level1">
+<h1>Studies</h1>
+<div id="5876291f" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">catalog <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ns.Study.catalog()</span>
+<span id="cb10-2"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(catalog), <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">list</span>(catalog.keys())[:<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>]</span></code></pre></div></div>
+</div>
+<div id="391770fa" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">study <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ns.Study(name<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Fake2025Meg"</span>, path<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>ns.CACHE_FOLDER)</span>
+<span id="cb11-2">events <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> study.run()</span>
+<span id="cb11-3"></span>
+<span id="cb11-4">columns <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"subject"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"type"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"start"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"duration"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"timeline"</span>]</span>
+<span id="cb11-5">events[columns]</span></code></pre></div></div>
+</div>
+
+
+</section>
+
+ ]]></description>
+  <guid>https://bkowshik.github.io/engram/neuroai/neuralset/01_tutorial.html</guid>
+  <pubDate>Thu, 25 Jun 2026 03:25:29 GMT</pubDate>
+</item>
+<item>
   <title></title>
   <link>https://bkowshik.github.io/engram/pytorch/01_tutorial.html</link>
   <description><![CDATA[ 
@@ -2582,7 +2960,7 @@ font-style: inherit;">1</span>).detach().numpy())</span></code></pre></div></div
 
  ]]></description>
   <guid>https://bkowshik.github.io/engram/pytorch/01_tutorial.html</guid>
-  <pubDate>Wed, 24 Jun 2026 04:47:39 GMT</pubDate>
+  <pubDate>Thu, 25 Jun 2026 03:25:29 GMT</pubDate>
 </item>
 </channel>
 </rss>
